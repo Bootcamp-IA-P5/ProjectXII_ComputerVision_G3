@@ -1,0 +1,12 @@
+opencv-python==4.8.1.78
+torch==2.0.1
+torchvision==0.15.2
+torchaudio==2.0.2
+pyyaml
+pillow
+jupyter
+jupyterlab
+pytest
+numpy
+python-dotenv
+sqlalchemy

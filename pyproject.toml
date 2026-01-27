@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=65.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "computer-vision-detection"
+version = "0.1.0"
+description = "Detección de logos en vídeos con YOLO"
+requires-python = ">=3.10"
+dependencies = [
+    "opencv-python==4.8.1.78",
+    "torch==2.0.1",
+    "torchvision==0.15.2",
+    "torchaudio==2.0.2",
+    "pyyaml",
+    "pillow",
+    "numpy",
+    "python-dotenv",
+    "sqlalchemy",
+]
+
+[project.optional-dependencies]
+dev = [
+    "jupyter",
+    "jupyterlab",
+    "pytest",
+    "pytest-cov",
+    "black",
+    "flake8",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-v --cov=src --cov-report=html"
+
+[tool.black]
+line-length = 100
+target-version = ["py310"]
+
+[tool.isort]
+profile = "black"
+line_length = 100

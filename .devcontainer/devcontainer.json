@@ -1,0 +1,12 @@
+{
+  "name": "ProjectXII CV",
+  "dockerFile": "../Dockerfile",
+  "runArgs": ["--gpus=all"],
+  "remoteUser": "root",
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-python.python", "ms-toolsai.jupyter"]
+    }
+  },
+  "postCreateCommand": "pip install -e .[dev]"
+}

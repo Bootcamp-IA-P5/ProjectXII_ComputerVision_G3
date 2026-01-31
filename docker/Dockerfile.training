@@ -1,0 +1,120 @@
+# =============================================================================
+# Dockerfile for YOLOv8 Training with GPU Support
+# =============================================================================
+# This Dockerfile creates a complete environment for training YOLOv8 models
+# with NVIDIA GPU acceleration. It includes:
+# - CUDA 11.8 with cuDNN for GPU computations
+# - Python 3.10 as the base Python version
+# - PyTorch with CUDA support
+# - Ultralytics (YOLOv8) library
+# - JupyterLab for interactive notebook execution
+# =============================================================================
+
+FROM nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu22.04
+
+# Avoid interactive prompts during package installation
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Set Python to use UTF-8 encoding
+ENV PYTHONIOENCODING=utf-8
+ENV LANG=C.UTF-8
+ENV LC_ALL=C.UTF-8
+
+# =============================================================================
+# System Dependencies
+# =============================================================================
+# Install Python and essential libraries for:
+# - python3.10: Main Python interpreter
+# - python3-pip: Package manager
+# - libgl1-mesa-glx, libglib2.0-0: Required by OpenCV for image processing
+# - git: For cloning repositories if needed
+# - wget, curl: For downloading files
+# =============================================================================
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3.10 \
+    python3.10-dev \
+    python3-pip \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
+    git \
+    wget \
+    curl \
+    && rm -rf /var/lib/apt/lists/* \
+    && ln -sf /usr/bin/python3.10 /usr/bin/python \
+    && ln -sf /usr/bin/python3.10 /usr/bin/python3
+
+# =============================================================================
+# Upgrade pip
+# =============================================================================
+RUN python -m pip install --upgrade pip
+
+# =============================================================================
+# PyTorch with CUDA 11.8 Support
+# =============================================================================
+# Installing PyTorch with specific CUDA version for GPU acceleration
+# torch: Main deep learning framework
+# torchvision: Computer vision utilities and pretrained models
+# torchaudio: Audio processing (included for completeness)
+# =============================================================================
+RUN pip install --no-cache-dir \
+    torch==2.1.0 \
+    torchvision==0.16.0 \
+    torchaudio==2.1.0 \
+    --index-url https://download.pytorch.org/whl/cu118
+
+# =============================================================================
+# YOLOv8 and Dependencies
+# =============================================================================
+# ultralytics: Official YOLOv8 library from Ultralytics
+# opencv-python: Image processing and computer vision
+# matplotlib: Plotting training curves and visualizations
+# pandas: Data manipulation for results analysis
+# seaborn: Statistical data visualization
+# jupyterlab: Interactive notebook environment
+# ipywidgets: Interactive widgets for Jupyter
+# tqdm: Progress bars
+# pyyaml: YAML file parsing (for data.yaml)
+# =============================================================================
+# =============================================================================
+# YOLOv8/v11 and Dependencies
+# =============================================================================
+# ultralytics>=8.3.0: Required for YOLOv11 support (released Oct 2024)
+# YOLOv11 is the latest version with improved accuracy and speed
+# =============================================================================
+RUN pip install --no-cache-dir \
+    "ultralytics>=8.3.0" \
+    opencv-python==4.8.1.78 \
+    matplotlib==3.8.0 \
+    pandas==2.1.1 \
+    seaborn==0.13.0 \
+    jupyterlab==4.0.7 \
+    ipywidgets==8.1.1 \
+    tqdm==4.66.1 \
+    pyyaml==6.0.1 \
+    Pillow==10.1.0
+
+# =============================================================================
+# Working Directory Setup
+# =============================================================================
+WORKDIR /workspace
+
+# =============================================================================
+# Expose Jupyter Port
+# =============================================================================
+# Port 8888 is the default Jupyter port
+EXPOSE 8888
+
+# =============================================================================
+# Default Command: Start JupyterLab
+# =============================================================================
+# --ip=0.0.0.0: Allow connections from any IP (needed for Docker)
+# --port=8888: Standard Jupyter port
+# --no-browser: Don't try to open browser (we're in a container)
+# --allow-root: Allow running as root user
+# --NotebookApp.token='': Disable token authentication for ease of use
+#                         (In production, you should use proper authentication)
+# =============================================================================
+CMD ["jupyter", "lab", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root", "--NotebookApp.token=''"]

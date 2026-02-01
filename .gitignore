@@ -1,0 +1,62 @@
+# =============================================================================
+# Python & Jupyter
+# =============================================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.ipynb_checkpoints
+.ipython/
+.jupyter/
+.env
+.venv
+venv/
+
+# =============================================================================
+# Datasets & Large Files
+# =============================================================================
+# Ignorar el dataset descomprimido y el ZIP
+dataset_yolov8/
+dataset_yolov8.zip
+*.zip
+*.tar.gz
+
+# =============================================================================
+# YOLO / Ultralytics Output
+# =============================================================================
+# Ignorar la carpeta runs (logs masivos de entrenamiento)
+runs/
+# ...pero si quieres puedes des-ignorar los resultados resumen (opcional)
+# !runs/**/args.yaml
+
+# Ignorar modelos base descargados automáticamente
+yolov8n.pt
+yolo11n.pt
+yolo11s.pt
+yolo11m.pt
+yolo11l.pt
+yolo11x.pt
+yolo26n.pt
+
+# =============================================================================
+# Trained Models (.pt)
+# =============================================================================
+# Ignorar todos los .pt por defecto (suelen ser grandes)
+*.pt
+*.onnx
+
+# ¡EXCEPCIÓN! Permitir subir solo los archivos de configuración
+!models/*.yaml
+!models/README.md
+
+# =============================================================================
+# OS & IDE
+# =============================================================================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# =============================================================================
+# Docker & Logs
+# =============================================================================
+*.log

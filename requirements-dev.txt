@@ -1,0 +1,20 @@
+# Extiende requirements.txt
+-r requirements.txt
+
+# ========== TESTING ==========
+pytest==7.4.3
+pytest-cov==4.1.0
+pytest-asyncio==0.21.1
+
+# ========== CODE QUALITY ==========
+black==23.11.0
+flake8==6.1.0
+isort==5.12.0
+mypy==1.7.0
+
+# ========== DEBUGGING & DEVELOPMENT ==========
+ipython==8.17.2
+ipdb==0.13.13
+
+# ========== API TESTING ==========
+httpx==0.25.1

@@ -121,7 +121,7 @@ class VideoProcessor:
             fps_sample = self.fps_sample
         
         # Validate that fps_sample is a positive integer to prevent ZeroDivisionError
-        if not isinstance(fps_sample, int) or fps_sample <= 0:
+        if not isinstance(fps_sample, int) or isinstance(fps_sample, bool) or fps_sample <= 0:
             logger.error(f"fps_sample must be a positive integer, got: {fps_sample}")
             return []
         

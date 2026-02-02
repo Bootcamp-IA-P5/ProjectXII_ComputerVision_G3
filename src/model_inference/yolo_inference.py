@@ -97,8 +97,8 @@ class YOLOInference:
     def predict(
         self,
         image: np.ndarray,
-        conf: Optional[float] = None, 
-        iou: Optional[float] = None, 
+        conf: Optional[float] = None,
+        iou: Optional[float] = None,
     ) -> Dict:
         """
         Run inference on image

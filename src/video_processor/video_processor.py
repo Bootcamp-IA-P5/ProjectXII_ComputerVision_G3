@@ -115,7 +115,16 @@ class VideoProcessor:
             logger.error("No video loaded. Call load_video() first")
             return []
         
-        fps_sample = fps_sample or self.fps_sample
+        # Use provided fps_sample only if explicitly passed (not None)
+        # Treat None as the only "use default" value
+        if fps_sample is None:
+            fps_sample = self.fps_sample
+        
+        # Validate that fps_sample is a positive integer to prevent ZeroDivisionError
+        if not isinstance(fps_sample, int) or isinstance(fps_sample, bool) or fps_sample <= 0:
+            logger.error(f"fps_sample must be a positive integer, got: {fps_sample}")
+            return []
+        
         frames = []
         frame_count = 0
         extracted_count = 0

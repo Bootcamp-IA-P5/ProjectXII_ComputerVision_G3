@@ -81,8 +81,8 @@ class VideoProcessor:
             logger.error(f"Failed to open video: {video_path}")
             try:
                 self.cap.release()
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug(f"Error releasing VideoCapture object: {e}")
             self.cap = None
             return False
         

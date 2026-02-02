@@ -214,35 +214,38 @@ class VideoProcessor:
                 "statistics": {...}
             }
         """
-        
-        # Load video
-        if not self.load_video(video_path):
-            return {"error": f"Failed to load video: {video_path}"}
-        
-        # Extract frames
-        frames = self.extract_frames()
-        if not frames:
-            return {"error": "No frames extracted from video"}
-        
-        # Process frames
-        detections = self.process_frames(frames, conf=conf, iou=iou)
-        
-        # Calculate statistics
-        stats = self._calculate_statistics(detections)
-        
-        result = {
-            "video_path": str(self.video_path),
-            "total_frames": self.total_frames,
-            "processed_frames": len(frames),
-            "fps": self.fps,
-            "duration_seconds": self.total_frames / self.fps if self.fps > 0 else 0,
-            "frame_dimensions": (self.frame_height, self.frame_width),
-            "detections_by_frame": detections,
-            "statistics": stats,
-        }
-        
-        logger.info("Video processing completed")
-        return result
+        try:
+            # Load video
+            if not self.load_video(video_path):
+                return {"error": f"Failed to load video: {video_path}"}
+            
+            # Extract frames
+            frames = self.extract_frames()
+            if not frames:
+                return {"error": "No frames extracted from video"}
+            
+            # Process frames
+            detections = self.process_frames(frames, conf=conf, iou=iou)
+            
+            # Calculate statistics
+            stats = self._calculate_statistics(detections)
+            
+            result = {
+                "video_path": str(self.video_path),
+                "total_frames": self.total_frames,
+                "processed_frames": len(frames),
+                "fps": self.fps,
+                "duration_seconds": self.total_frames / self.fps if self.fps > 0 else 0,
+                "frame_dimensions": (self.frame_height, self.frame_width),
+                "detections_by_frame": detections,
+                "statistics": stats,
+            }
+            
+            logger.info("Video processing completed")
+            return result
+        finally:
+            # Always close the video capture to prevent resource leaks
+            self.close()
     
     def _calculate_statistics(
         self,

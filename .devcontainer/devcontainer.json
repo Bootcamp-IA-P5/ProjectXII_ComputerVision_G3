@@ -1,3 +1,5 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/python
 {
   "name": "ProjectXII Computer Vision",
   "image": "mcr.microsoft.com/devcontainers/python:2-3.11-trixie",
@@ -37,4 +39,3 @@
     "3000": {"label": "React Dev", "onAutoForward": "notify"},
     "5173": {"label": "Vite", "onAutoForward": "notify"}
   }
-}

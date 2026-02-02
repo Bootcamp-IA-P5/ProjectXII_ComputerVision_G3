@@ -1,0 +1,107 @@
+{
+  "project": "ProjectXII Computer Vision",
+  "description": "Modelos entrenados para detección de logos en imágenes y vídeos",
+  "dataset": {
+    "name": "Dataset YOLO Logos",
+    "total_images": 3304,
+    "total_classes": 175,
+    "train_split": "80%",
+    "val_split": "20%"
+  },
+  "models": [
+    {
+      "id": "yolov8x",
+      "name": "YOLOv8 Extra Large",
+      "path": "models/trained/best_yolov8x.pt",
+      "onnx_path": "models/trained/best_yolov8x.onnx",
+      "format": "PyTorch",
+      "version": "8x",
+      "trainer": "Kiru",
+      "training_date": "2024-01-XX",
+      "training_notebook": "notebooks/Training_YOLO_K.ipynb",
+      "dataset_classes": 175,
+      "metrics": {
+        "mAP50": 0.927,
+        "mAP50-95": 0.900,
+        "precision": 0.885,
+        "recall": 0.846
+      },
+      "performance": {
+        "fps": 18.0,
+        "inference_time_ms": 55.5,
+        "model_size_mb": 135.0,
+        "model_parameters": "68.2M"
+      },
+      "use_case": "Inferencia de alta precisión, buen balance entre velocidad y exactitud",
+      "pros": [
+        "Muy buena precisión (mAP50: 0.927)",
+        "Más rápido que v11x (18 FPS vs 13 FPS)",
+        "Balance excelente entre rendimiento y recursos"
+      ],
+      "cons": [
+        "Menos preciso que v11x (mAP50-95: 0.900 vs 0.927)",
+        "Más pesado que modelos pequeños"
+      ]
+    },
+    {
+      "id": "yolo11x",
+      "name": "YOLOv11 Extra Large",
+      "path": "models/trained/best_yolo11x.pt",
+      "onnx_path": "models/trained/best_yolo11x.onnx",
+      "format": "PyTorch",
+      "version": "11x",
+      "trainer": "Kiru",
+      "training_date": "2024-01-XX",
+      "training_notebook": "notebooks/Training_YOLO11x_K.ipynb",
+      "dataset_classes": 175,
+      "metrics": {
+        "mAP50": 0.959,
+        "mAP50-95": 0.927,
+        "precision": 0.906,
+        "recall": 0.921
+      },
+      "performance": {
+        "fps": 13.0,
+        "inference_time_ms": 76.7,
+        "model_size_mb": 134.5,
+        "model_parameters": "57.0M"
+      },
+      "use_case": "Máxima precisión, análisis de vídeos batch, no necesita tiempo real",
+      "pros": [
+        "Máxima precisión (mAP50-95: 0.927)",
+        "Excelente recall (0.921)",
+        "Mejor para logos pequeños"
+      ],
+      "cons": [
+        "Lento (13 FPS)",
+        "Requiere más recursos"
+      ]
+    }
+  ],
+  "recommendations": {
+    "recommended_for_production": "yolov8x",
+    "recommended_for_accuracy": "yolo11x",
+    "recommended_for_demo": "yolov8x",
+    "decision_guide": {
+      "use_yolov8x_if": [
+        "Necesitas balance entre precisión y velocidad",
+        "Procesamiento de múltiples vídeos",
+        "Velocidad es importante"
+      ],
+      "use_yolo11x_if": [
+        "Necesitas máxima precisión",
+        "Procesas vídeos batch (no tiempo real)",
+        "Tienes GPU disponible",
+        "Logos muy pequeños"
+      ]
+    }
+  },
+  "file_structure": {
+    "models/trained/": "Modelos entrenados (.pt)",
+    "models/trained/best_yolov8x.pt": "Modelo YOLOv8x principal",
+    "models/trained/best_yolov8x.onnx": "Modelo YOLOv8x en formato ONNX",
+    "models/trained/best_yolo11x.pt": "Modelo YOLOv11x principal",
+    "models/trained/args_yolo11x.yaml": "Configuración de entrenamiento YOLOv11x",
+    "models/metadata.json": "Este archivo (información de modelos)"
+  }
+}

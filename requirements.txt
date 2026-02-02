@@ -1,12 +1,36 @@
+# ========== VISIÓN POR COMPUTADOR ==========
+ultralytics==8.4.9
 opencv-python==4.8.1.78
+scikit-image==0.22.0
+Pillow==10.0.1
+
+# ========== DEEP LEARNING ==========
 torch==2.0.1
 torchvision==0.15.2
 torchaudio==2.0.2
-pyyaml
-pillow
-jupyter
-jupyterlab
-pytest
-numpy
-python-dotenv
-sqlalchemy
+numpy==1.24.3
+
+# ========== API & WEB ==========
+fastapi==0.104.1
+uvicorn==0.24.0
+python-multipart==0.0.6
+pydantic==2.4.2
+
+# ========== BASE DE DATOS ==========
+sqlalchemy==2.0.23
+
+# ========== CONFIGURACIÓN & UTILS ==========
+python-dotenv==1.0.0
+PyYAML==6.0.1
+requests==2.31.0
+loguru==0.7.2
+tqdm==4.66.1
+
+# ========== DATA SCIENCE ==========
+pandas==2.0.3
+jupyter==1.0.0
+jupyterlab==4.0.9
+
+# ========== IMAGEN & PROCESAMIENTO ==========
+matplotlib==3.8.1
+seaborn==0.13.0

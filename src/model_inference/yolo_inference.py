@@ -104,7 +104,7 @@ class YOLOInference:
         Run inference on image
         
         Args:
-            image: Input image (BRG numpy array or path string)
+            image: Input image (BGR numpy array or path string)
             conf: Confidence threshold override
             iou: IoU threshold override
             

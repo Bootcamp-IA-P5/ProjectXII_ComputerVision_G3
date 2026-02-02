@@ -130,9 +130,10 @@ class YOLOInference:
         
         # Handle image input (path or array)
         if isinstance(image, str):
-            image = cv2.imread(image)
+            image_path = image
+            image = cv2.imread(image_path)
             if image is None:
-                raise ValueError(f"Could not read image from {image}")
+                raise ValueError(f"Could not read image from {image_path}")
         
         original_shape = image.shape[:2] 
         

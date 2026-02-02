@@ -79,6 +79,8 @@ class VideoProcessor:
         self.cap = cv2.VideoCapture(str(video_path))
         if not self.cap.isOpened():
             logger.error(f"Failed to open video: {video_path}")
+            self.cap.release()
+            self.cap = None
             return False
         
         # Get video properties

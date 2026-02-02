@@ -125,8 +125,10 @@ class YOLOInference:
                 "image_path": str or None,
             }
         """
-        conf = conf or self.confidence_threshold
-        iou = iou or self.iou_threshold
+        if conf is None:
+            conf = self.confidence_threshold
+        if iou is None:
+            iou = self.iou_threshold
         
         # Handle image input (path or array)
         if isinstance(image, str):

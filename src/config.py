@@ -35,5 +35,12 @@ DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./project_cv.db")
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
 
 # Ensure directories exist
-DATA_DIR.mkdir(parents=True, exist_ok=True)
-(DATA_DIR / "detections").mkdir(parents=True, exist_ok=True)
+def ensure_directories_initialized() -> None:
+    """
+    Create required project directories if they do not already exist.
+
+    This function is intentionally side-effectful and should be called
+    explicitly by application entry points, rather than at import time.
+    """
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    (DATA_DIR / "detections").mkdir(parents=True, exist_ok=True)

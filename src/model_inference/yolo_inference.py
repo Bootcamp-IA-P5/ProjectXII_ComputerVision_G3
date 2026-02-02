@@ -181,7 +181,7 @@ class YOLOInference:
         """
         Count detections per class
         
-        Args: 
+        Args:
             detections: List of detections dicts
             
         Returns:

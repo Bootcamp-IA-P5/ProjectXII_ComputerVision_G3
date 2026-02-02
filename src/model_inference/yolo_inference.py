@@ -6,7 +6,7 @@ Handles model loading, predictions, and output normalization
 import cv2
 import numpy as np
 from pathlib import Path
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, List, Optional
 import logging
 
 try:

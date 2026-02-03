@@ -126,7 +126,7 @@ class DetectionPipeline:
         
     def get_summary(self, results: Optional[Dict] = None) -> Dict:
         """
-        Resumen legible: "Nike 150 veces, 5 segundos"
+        Resumen legible: "Nike 150 detections, 5 seconds screen time"
         
         Generate human-readable summary from results
         

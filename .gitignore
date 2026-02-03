@@ -60,3 +60,8 @@ Thumbs.db
 # Docker & Logs
 # =============================================================================
 *.log
+
+# Ignorar archivos de entrenamiento en docker
+/docker/docker-compose.training.yml
+/docker/Dockerfile.training
+/docker/README.md

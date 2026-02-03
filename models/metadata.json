@@ -17,7 +17,7 @@
       "format": "PyTorch",
       "version": "8x",
       "trainer": "Kiru",
-      "training_date": "2024-01-XX",
+      "training_date": "2026-01-30",
       "training_notebook": "notebooks/Training_YOLO_K.ipynb",
       "dataset_classes": 175,
       "metrics": {
@@ -51,7 +51,7 @@
       "format": "PyTorch",
       "version": "11x",
       "trainer": "Kiru",
-      "training_date": "2024-01-XX",
+      "training_date": "2026-01-30",
       "training_notebook": "notebooks/Training_YOLO11x_K.ipynb",
       "dataset_classes": 175,
       "metrics": {

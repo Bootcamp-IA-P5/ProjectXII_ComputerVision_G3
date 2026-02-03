@@ -39,3 +39,4 @@
     "3000": {"label": "React Dev", "onAutoForward": "notify"},
     "5173": {"label": "Vite", "onAutoForward": "notify"}
   }
+}

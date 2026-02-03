@@ -12,7 +12,7 @@ Due to storage limits on GitHub and to avoid bandwidth issues, the large model w
 ### 📥 Accessing the Weights
 For team members: The weights are stored in our shared Google Drive folder.
 1. Download the required `.pt` file (e.g., `yolo11x_logos_best.pt`).
-2. Place the file inside this `models/` directory.
+2. Place the file inside this `models/trained` directory.
 3. The system is configured to load them from this path by default.
 
 *External users: Please contact the repository owners for access to the model weights.*

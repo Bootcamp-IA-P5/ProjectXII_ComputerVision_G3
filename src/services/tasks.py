@@ -100,7 +100,11 @@ def process_video_task(self, video_id: int, video_path: str,
         # Update task status: complete
         self.update_state(state="SUCCESS", meta={"current": 100, "status": "Complete"})
         
-        logger.info(f"Video {video_id} processed successfully. Detections: {results['statistics']['total_detections']}")
+        if isinstance(results, dict) and "error" in results:
+            logger.error(f"Video {video_id} processing reported error: {results.get('error')}")
+        else:
+            total_detections = results.get("statistics", {}).get("total_detections", 0) if isinstance(results, dict) else 0
+            logger.info(f"Video {video_id} processed successfully. Detections: {total_detections}")
 
         return {
             "video_id": video_id,

@@ -55,6 +55,8 @@ yolo26n.pt
 Thumbs.db
 .vscode/
 .idea/
+node_modules/
+frontend/node_modules/
 
 # =============================================================================
 # Docker & Logs

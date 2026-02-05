@@ -1,0 +1,59 @@
+/* ========================================
+   APP LAYOUT STYLES
+   ======================================== */
+
+.app {
+    min-height: 100vh;
+    padding: var(--spacing-xl) 0;
+}
+
+.app-header {
+    text-align: center;
+    margin-bottom: var(--spacing-2xl);
+    padding: var(--spacing-xl) 0;
+}
+
+.app-subtitle {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-secondary);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+.app-main {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.app-footer {
+    text-align: center;
+    margin-top: var(--spacing-2xl);
+    padding-top: var(--spacing-xl);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.app-footer p {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+}
+
+/* ========================================
+   RESPONSIVE ADJUSTMENTS
+   ======================================== */
+
+@media (max-width: 768px) {
+    .app {
+        padding: var(--spacing-lg) 0;
+    }
+
+    .app-header {
+        margin-bottom: var(--spacing-xl);
+        padding: var(--spacing-lg) 0;
+    }
+
+    .app-subtitle {
+        font-size: var(--font-size-base);
+        padding: 0 var(--spacing-md);
+    }
+}

@@ -28,7 +28,7 @@ import logging
 from pathlib import Path # Maneja rutas de archivos
 from datetime import datetime # Timestamps
 from typing import Dict, List # Type hints
-from fastapi import FastAPI, File, UploadFile, Depends, HTTPException
+from fastapi import FastAPI, File, UploadFile, Depends, HTTPException, Form
 from fastapi.middleware.cors import CORSMiddleware # CORS para React
 from sqlalchemy.orm import Session 
 
@@ -122,9 +122,11 @@ async def root():
 
 @app.post("/upload", response_model=UploadResponseSchema)
 async def upload_video(
-    file: UploadFile = File(...),               # ... significa REQUERIDO
-    request: VideoUploadRequest = Depends(),    # Pydantic valida parametro
-    db: Session = Depends(get_db)               # inyectada automaticamente
+    file: UploadFile = File(...),
+    confidence_threshold: float = Form(default=0.5, ge=0.0, le=1.0),
+    iou_threshold: float = Form(default=0.45, ge=0.0, le=1.0),
+    fps_sample: int = Form(default=1, ge=1),
+    db: Session = Depends(get_db)
 ):    
     """
     Upload and process video
@@ -137,7 +139,9 @@ async def upload_video(
 
     Args:
         file: Archivo vídeo MP4/AVI/MOV
-        request: confidence_threshold, iou_threshold, fps_sample
+        confidence_threshold: Min confidence for detections (0-1), default 0.5
+        iou_threshold: IoU threshold for NMS (0-1), default 0.45
+        fps_sample: Extract 1 frame every N frames, default 1
         db: Conexión a BD (inyectada por FastAPI)
         
     Returns:
@@ -176,9 +180,9 @@ async def upload_video(
         task = process_video_task.delay(
             video_id=video_id,
             video_path=str(file_path),
-            confidence_threshold=request.confidence_threshold,
-            iou_threshold=request.iou_threshold,
-            fps_sample=request.fps_sample
+            confidence_threshold=confidence_threshold,
+            iou_threshold=iou_threshold,
+            fps_sample=fps_sample
         )
         logger.info(f"✅ Video processing task queued: {task.id}")
 

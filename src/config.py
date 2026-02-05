@@ -29,10 +29,21 @@ IOU_THRESHOLD = float(os.getenv("IOU_THRESHOLD", "0.45"))
 DEVICE = os.getenv("DEVICE", "auto")  # auto, cpu, cuda
 
 # Database (Phase 2)
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./project_cv.db")
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 # Logging
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
+
+# API Configuration
+API_HOST = os.getenv("API_HOST", "0.0.0.0")
+API_PORT = int(os.getenv("API_PORT", "8000"))
+
+# CORS - Allowed Origins
+ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000").split(",")
+
+# VIDEO Upload Directory
+VIDEO_UPLOAD_DIR = DATA_DIR / "uploads" / "videos"
+VIDEO_UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
 # Ensure directories exist
 def ensure_directories_initialized() -> None:
@@ -44,3 +55,4 @@ def ensure_directories_initialized() -> None:
     """
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     (DATA_DIR / "detections").mkdir(parents=True, exist_ok=True)
+    VIDEO_UPLOAD_DIR.mkdir(parents=True, exist_ok=True)

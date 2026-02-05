@@ -5,7 +5,6 @@
 # Paths are absolute to work correctly from Docker container.
 # =============================================================================
 
-
 # Dataset paths (absolute paths for Docker container)
 train: /workspace/dataset_yolov8/train/images
 val: /workspace/dataset_yolov8/valid/images

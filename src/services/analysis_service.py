@@ -56,7 +56,7 @@ class AnalysisService:
             if not video_path_obj.exists():
                 raise FileNotFoundError(f"Video file not found: {video_path}")
             
-            results = self.processor.process_video(video_path, fps_sample)
+            results = self.processor.process_video(video_path)
             
             
             metadata = {

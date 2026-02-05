@@ -6,35 +6,35 @@ Handles:
 - Results retrieval
 - Brand statistics
 
-¿Qué pasa cuando subes un vídeo?
-1. React hace: POST /upload con file + parámetros
-2. FastAPI recibe en upload_video()
-3. Valida: ¿existe el archivo?
-4. Guarda: Escribe archivo en disco
-5. Registra: Crea row en tabla "videos"
-6. Devuelve: {"video_id": 1, "status": "pending", ...}
-7. React recibe JSON y muestra "Vídeo subido"
+What happens when you upload a video?
+1. React sends: POST /upload with file + parameters
+2. FastAPI receives in upload_video()
+3. Validates: does the file exist?
+4. Saves: Writes file to disk
+5. Registers: Creates row in "videos" table
+6. Returns: {"video_id": 1, "status": "pending", ...}
+7. React receives JSON and displays "Video uploaded"
 
-¿Qué pasa cuando pides resultados?
-1. React hace: GET /videos/1/results
-2. FastAPI obtiene vídeo de BD
-3. Obtiene TODAS las detecciones del vídeo 1
-4. Agrupa por marca: {"Nike": [det1, det2], "Adidas": [det3]}
-5. Calcula: promedios, screen time, primero/último frame
-6. Devuelve: JSON gigante con TODO
-7. React muestra gráficos con los datos"""
+What happens when you request results?
+1. React sends: GET /videos/1/results
+2. FastAPI retrieves video from DB
+3. Gets ALL detections for video 1
+4. Groups by brand: {"Nike": [det1, det2], "Adidas": [det3]}
+5. Calculates: averages, screen time, first/last frame
+6. Returns: Giant JSON with EVERYTHING
+7. React displays charts with the data"""
 
 import logging
-from pathlib import Path # Maneja rutas de archivos
+from pathlib import Path # Handles file paths
 from datetime import datetime # Timestamps
 from typing import Dict, List # Type hints
 from fastapi import FastAPI, File, UploadFile, Depends, HTTPException, Form
-from fastapi.middleware.cors import CORSMiddleware # CORS para React
+from fastapi.middleware.cors import CORSMiddleware # CORS for React
 from sqlalchemy.orm import Session 
 
 from src.config import API_HOST, API_PORT, API_RELOAD, ALLOWED_ORIGINS, VIDEO_UPLOAD_DIR, DEVICE
 from src.database.init_db import init_db, get_db
-# DESCOMENTAR cuando se haga la BBDD y los modelos
+# UNCOMMENT when DB and models are implemented
 # from src.database.models import Video, Detection, Brand, AnalysisSession
 from src.api.schemas import (
     VideoUploadRequest,
@@ -45,42 +45,42 @@ from src.api.schemas import (
 
 logger = logging.getLogger(__name__)
 
-# CREAR APP (instancia de FastAPI)
+# CREATE APP (FastAPI instance)
 app = FastAPI(
     title="ProjectXII Computer Vision API",
     description="Video analysis with logo detection",
     version="1.0.0",
 )
 
-# CORS (Para que React pueda hablar con FastAPI)
+# CORS (So React can communicate with FastAPI)
 # CORS = Cross-Origin Resource Sharing
-# Sin esto React no puede llamar a FastAPI, es como un firewall que permite/rechaza solicitudes de otros dominios
+# Without this React cannot call FastAPI, it's like a firewall that allows/rejects requests from other domains
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=ALLOWED_ORIGINS,  # Que dominios pueden acceder
-    allow_credentials=True,         # Permite cookies/auth
-    allow_methods=["*"],            # Get, post, delete...
-    allow_headers=["*"]             # Cualquier header
+    allow_origins=ALLOWED_ORIGINS,  # Which domains can access
+    allow_credentials=True,         # Allows cookies/auth
+    allow_methods=["*"],            # GET, POST, DELETE...
+    allow_headers=["*"]             # Any header
 )
 
 
-# EVENTOS (Startup/Shutdown)
+# EVENTS (Startup/Shutdown)
 @app.on_event("startup")
 async def startup_event():
     """
-    Se ejecuta al INICIAR la aplicación
+    Executes when STARTING the application
     
-    Aquí inicializamos cosas que necesitamos antes de procesar requests
+    Here we initialize things we need before processing requests
 
     """
     try:
         logger.info("🚀 Starting API...")
         
-        # Crear tablas en BD si no existen
+        # Create DB tables if they don't exist
         init_db()
         logger.info("✅ Database initialized")
 
-        # Crear carpeta de uploads si no existe
+        # Create uploads folder if it doesn't exist
         VIDEO_UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
         logger.info("✅ Upload directories created")
 
@@ -95,8 +95,8 @@ async def startup_event():
 @app.on_event("shutdown")
 async def shutdown_event():
     """
-    Se ejecuta AL APAGAR la aplicación
-    Limpiamos recursos (cierres de conexiones, etc)
+    Executes when SHUTTING DOWN the application
+    We clean up resources (close connections, etc)
 
     """
     logger.info("🛑 Shutting down API...")
@@ -108,12 +108,12 @@ async def root():
     """
     Health check endpoint
         
-    Usa para verificar si la API está funcionando
+    Use to verify if the API is working
     
-    Retorna:
+    Returns:
         {"status": "ok", "message": "API running"}
     """
-    # Devuelve un diccionario que se convierte automaticamente a JSON
+    # Returns a dictionary that is automatically converted to JSON
     return {
         "status": "ok",
         "message": "API running",
@@ -131,52 +131,52 @@ async def upload_video(
     """
     Upload and process video
     
-    Qué hace:
-    1. Valida que el archivo exista
-    2. Guarda archivo en disco
-    3. Crea registro en BD
-    4. Devuelve ID del vídeo
+    What it does:
+    1. Validates that the file exists
+    2. Saves file to disk
+    3. Creates record in DB
+    4. Returns video ID
 
     Args:
-        file: Archivo vídeo MP4/AVI/MOV
+        file: Video file MP4/AVI/MOV
         confidence_threshold: Min confidence for detections (0-1), default 0.5
         iou_threshold: IoU threshold for NMS (0-1), default 0.45
         fps_sample: Extract 1 frame every N frames, default 1
-        db: Conexión a BD (inyectada por FastAPI)
+        db: DB connection (injected by FastAPI)
         
     Returns:
-        UploadResponseSchema con:
-        - video_id: ID asignado en BD
-        - filename: Nombre del archivo
-        - status: "pending" (va a procesarse)
-        - message: Mensaje informativo
+        UploadResponseSchema with:
+        - video_id: ID assigned in DB
+        - filename: File name
+        - status: "pending" (will be processed)
+        - message: Informative message
     """
     from src.services.tasks import process_video_task
     from uuid import uuid4
     
     try: 
-        # Paso 1: Validar que el archivo exista y tenga nombre
+        # Step 1: Validate that the file exists and has a name
         if not file or not file.filename:
             logger.warning("⚠️ Upload attempt without file")
             raise HTTPException(status_code=400, detail="No file provided")
         
-        # Paso 2: Guardar archivo en disco 
-        # Lee contenido del archivo
+        # Step 2: Save file to disk 
+        # Read file contents
         contents = await file.read()
         
-        # Crear ruta con nombre único para evitar sobrescrituras
+        # Create path with unique name to avoid overwrites
         original_name = Path(file.filename)
         unique_filename = f"{uuid4().hex}{original_name.suffix}"
         file_path = VIDEO_UPLOAD_DIR / unique_filename
         
-        # Escribe contenido a disco 
+        # Write contents to disk 
         file_path.write_bytes(contents)
         logger.info(f"✅ File saved: {file_path}")
         
-        # Paso 3: Crear ID Temporal mientras BD no esté lista
+        # Step 3: Create temporary ID while DB is not ready
         video_id = str(uuid4())
         
-        # Paso 4: Encolar tarea Celery para procesar video
+        # Step 4: Enqueue Celery task to process video
         task = process_video_task.delay(
             video_id=video_id,
             video_path=str(file_path),
@@ -186,20 +186,20 @@ async def upload_video(
         )
         logger.info(f"✅ Video processing task queued: {task.id}")
 
-        # Paso 5: Devolver respuesta que FastAPI convierte a JSON
+        # Step 5: Return response that FastAPI converts to JSON
         return UploadResponseSchema(
-            video_id=video_id,        # ID generado por BD
+            video_id=video_id,        # ID generated by DB
             filename=file.filename,
-            status="queued",            # Estado inicial
+            status="queued",            # Initial status
             message=f"Video '{file.filename}' uploaded. Processing started. Task ID: {task.id}"
         )
     
     except HTTPException:
-        # Si es error HTTP, propagar
+        # If it's an HTTP error, propagate
         raise
     
     except Exception as e:
-        # Cualquier otro error
+        # Any other error
         logger.error(f"❌ Upload error: {e}", exc_info=True)
         raise HTTPException(
             status_code=500,
@@ -211,19 +211,19 @@ async def list_videos(db: Session = Depends(get_db)):
     """
     List all uploaded videos
     
-    Qué hace:
-    1. Query a BD: obtiene TODOS los vídeos
-    2. Devuelve lista de VideoResponse (JSON)
+    What it does:
+    1. Query DB: gets ALL videos
+    2. Returns list of VideoResponse (JSON)
     
     Returns:
-        Lista de VideoResponse:
+        List of VideoResponse:
         [
             {"id": 1, "filename": "video1.mp4", "duration_seconds": 120.5, ...},
             {"id": 2, "filename": "video2.mp4", "duration_seconds": 95.2, ...}
         ]
     """
     try:
-        # Query "Dame TODOS los videos de la tabla"
+        # Query "Get ALL videos from the table"
         videos = db.query(Video).all()
         logger.info(f"✅ Retrieved {len(videos)} videos from database")
         
@@ -239,24 +239,24 @@ async def get_video(video_id: int, db: Session = Depends(get_db)):
     """
     Get single video metadata
 
-    Qué hace:
-    1. Query a BD: obtiene un vídeo específico
-    2. Si no existe → error 404
-    3. Devuelve VideoResponse (JSON)
+    What it does:
+    1. Query DB: gets a specific video
+    2. If it doesn't exist → 404 error
+    3. Returns VideoResponse (JSON)
     
     Args:
-        video_id: ID del vídeo (ej: /videos/1)
+        video_id: Video ID (e.g.: /videos/1)
         
     Returns:
-        VideoResponse con info del vídeo
+        VideoResponse with video info
     """
     try:
-        # Query: "Dame el video cuya id == video_id"
-        # .filter() = WHERE en SQL
-        # .first() = devuelve el 1er registro o None
+        # Query: "Get the video whose id == video_id"
+        # .filter() = WHERE in SQL
+        # .first() = returns the 1st record or None
         video = db.query(Video).filter(Video.id == video_id).first()
         
-        # Si no encuentra nada, .first() devuelve None
+        # If nothing is found, .first() returns None
         if not video:
             logger.warning(f"⚠️ Video {video_id} not found")
             raise HTTPException(
@@ -267,7 +267,7 @@ async def get_video(video_id: int, db: Session = Depends(get_db)):
         return video
     
     except HTTPException:
-        raise # Error HTTP
+        raise # HTTP Error
     except Exception as e:
         logger.error(f"❌ Get video error: {e}")
         raise HTTPException(status_code=500, detail="Failed to get video")
@@ -277,32 +277,32 @@ async def get_video_results(video_id: int, db: Session = Depends(get_db)):
     """
     Get complete results including detections and statistics
 
-    LA MÁS COMPLEJA    
-    Qué hace:
-    1. Obtiene vídeo
-    2. Obtiene TODAS las detecciones del vídeo
-    3. Agrupa por frame y por marca
-    4. Calcula estadísticas
-    5. Construye respuesta con TODO
+    THE MOST COMPLEX    
+    What it does:
+    1. Gets video
+    2. Gets ALL detections for the video
+    3. Groups by frame and by brand
+    4. Calculates statistics
+    5. Builds response with EVERYTHING
     
     Returns:
-        VideoResultsResponse con:
-        - video: Metadata del vídeo
-        - total_detections: Cantidad total
-        - unique_brands: Cuántas marcas diferentes
-        - brands: Dict con stats por marca
-        - detections_by_frame: Detecciones organizadas por frame
+        VideoResultsResponse with:
+        - video: Video metadata
+        - total_detections: Total count
+        - unique_brands: How many different brands
+        - brands: Dict with stats per brand
+        - detections_by_frame: Detections organized by frame
     """
     try:
-        # Paso 1: Obtener video
+        # Step 1: Get video
         video = db.query(Video).filter(Video.id == video_id).first()
         
         if not video:
             logger.warning(f"⚠️ Video {video_id} not found")
             raise HTTPException(status_code=404, detail="Video not found")
       
-        # Paso 2: Obtener TODAS las detecciones de este video
-        # .join(Brand) = conecta con tabla Brand para obtener nombre
+        # Step 2: Get ALL detections for this video
+        # .join(Brand) = connects with Brand table to get name
         detections = (
             db.query(Detection)
             .join(Brand)
@@ -312,55 +312,55 @@ async def get_video_results(video_id: int, db: Session = Depends(get_db)):
         
         logger.info(f"✅ Retrieved {len(detections)} detections for video {video_id}")
         
-        # Paso 3: Agrupar detecciones por frame
-        # Resultado: {0: [det1, det2], 1: [det3], ...}
+        # Step 3: Group detections by frame
+        # Result: {0: [det1, det2], 1: [det3], ...}
         detections_by_frame: Dict[int, List] = {}
         for det in detections:
-            frame_num = det.frame_id or 0   # Si no tiene frame_id, usa 0
+            frame_num = det.frame_id or 0   # If no frame_id, use 0
             if frame_num not in detections_by_frame:
                 detections_by_frame[frame_num] = []
             detections_by_frame[frame_num].append(det)
         
-        # Paso 4: Calcular estadísticas por MARCA
-        # Resultado: {"Nike": {"count": 50, "avg_confidence": 0.85, ...}, ...}
+        # Step 4: Calculate statistics per BRAND
+        # Result: {"Nike": {"count": 50, "avg_confidence": 0.85, ...}, ...}
         brands_stats: Dict = {}
         
         for det in detections:
-            brand_name = det.brand.name     # Obtener nombre de la marca relacionada
+            brand_name = det.brand.name     # Get related brand name
             
-            # Si es la primera vez que vemos esta marca, crear entrada
+            # If it's the first time we see this brand, create entry
             if brand_name not in brands_stats:
                 brands_stats[brand_name] = {
                     "detections": 0, 
-                    "confidences": [],   # Para calcular promedio despues
-                    "frames": set(),    # Para contar frames unicos
+                    "confidences": [],   # To calculate average later
+                    "frames": set(),    # To count unique frames
                 }
         
-            # Agregar datos
+            # Add data
             brands_stats[brand_name]["detections"] += 1
             brands_stats[brand_name]["confidences"].append(det.confidence)
             brands_stats[brand_name]["frames"].add(det.frame_id or 0)
         
-        # Paso 5: Procesar estadisticas (calcular promedios, etc)
+        # Step 5: Process statistics (calculate averages, etc)
         brands_final = {}
         for brand_name, stats in brands_stats.items():
-            # Calcular confianza promedio
+            # Calculate average confidence
             avg_conf = (
                 sum(stats["confidences"]) / len(stats["confidences"])
                 if stats["confidences"]
                 else 0.0
             )
             
-            # Convertir frames set a lista y ordenar
+            # Convert frames set to list and sort
             frames_list = sorted(list(stats["frames"]))
             
-            # Calcular screen time
+            # Calculate screen time
             screen_time_frames = len(frames_list)
             screen_time_seconds = (
                 screen_time_frames / video.fps if video.fps > 0 else 0
             )
         
-            # Construir respuesta para esta marca
+            # Build response for this brand
             brands_final[brand_name] = {
                 "brand_name": brand_name,
                 "detections": stats["detections"],
@@ -371,15 +371,15 @@ async def get_video_results(video_id: int, db: Session = Depends(get_db)):
                 "last_frame": frames_list[-1] if frames_list else 0,
             }
         
-        # Paso 6: Construir respuesta final
+        # Step 6: Build final response
         return VideoResultsResponse(
-            video=video,                        # VideoResponse (convertido automaticamente)
+            video=video,                        # VideoResponse (converted automatically)
             total_detections=len(detections),   
             unique_brands=len(brands_final),
-            brands=brands_final,                # Dict con stats por marca
+            brands=brands_final,                # Dict with stats per brand
             detections_by_frame=detections_by_frame,
             processing_time_seconds=None,       # Placeholder
-            confidence_threshold=0.5,           # PH, obtener de BD despues
+            confidence_threshold=0.5,           # PH, get from DB later
             iou_threshold=0.45,
             fps_sample=1 
         )
@@ -411,13 +411,13 @@ async def get_task_status(task_id: str):
 if __name__ == "__main__":
     import uvicorn
     
-    # Inicia servidor Uvicorn (servidor ASGI)
+    # Start Uvicorn server (ASGI server)
     # ASGI >> Asynchronous Server Gateway Interface
     
     uvicorn.run(
-        app,                # La aplicación FastAPI
-        host=API_HOST,      # Host, escucha en todas las IPs
-        port=API_PORT,      # Puerto
+        app,                # The FastAPI application
+        host=API_HOST,      # Host, listens on all IPs
+        port=API_PORT,      # Port
         reload=API_RELOAD,  # Configurable via API_RELOAD env var (dev mode only)
     )
     

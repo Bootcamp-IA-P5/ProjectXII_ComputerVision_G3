@@ -2,15 +2,15 @@
 
 ## Cómo se conectan backend y database
 
-### 1. Analysis Service retorna dict
-El archivo `analysis_service.py` procesa videos y retorna un dict con esta estructura.
+### 1. Servicio de análisis retorna dict
+El flujo de análisis de video (p.ej. `VideoProcessor.process_video()` dentro de `analysis_service.py`) procesa videos y retorna un dict con esta estructura.
 
 ### 2. Database team convierte dict → modelos ORM
-El archivo `tasks.py` usa los modelos ORM de database team para guardar ese dict en BD.
+El archivo `tasks.py` recibe el dict retornado por `VideoProcessor.process_video()` y usa los modelos ORM de database team para guardarlo en BD.
 
 ### 3. Ejemplo real
 
-**Input a `analyze_video()`:**
+**Input a `VideoProcessor.process_video()`:**
 - video_id: "123e4567-e89b-12d3-a456-426614174000"
 - video_path: "./data/uploads/videos/mi_video.mp4"
 

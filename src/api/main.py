@@ -32,7 +32,7 @@ from fastapi import FastAPI, File, UploadFile, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware # CORS para React
 from sqlalchemy.orm import Session 
 
-from src.config import API_HOST, API_PORT, ALLOWED_ORIGINS, VIDEO_UPLOAD_DIR, DEVICE
+from src.config import API_HOST, API_PORT, API_RELOAD, ALLOWED_ORIGINS, VIDEO_UPLOAD_DIR, DEVICE
 from src.database.init_db import init_db, get_db
 # DESCOMENTAR cuando se haga la BBDD y los modelos
 # from src.database.models import Video, Detection, Brand, AnalysisSession
@@ -414,7 +414,7 @@ if __name__ == "__main__":
         app,                # La aplicación FastAPI
         host=API_HOST,      # Host, escucha en todas las IPs
         port=API_PORT,      # Puerto
-        reload=True,        # Reinicia cada vez que cambias codigo (dev mode)
+        reload=API_RELOAD,  # Configurable via API_RELOAD env var (dev mode only)
     )
     
     

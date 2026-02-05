@@ -9,7 +9,7 @@ from datetime import datetime
 
 
 # ============================================================================
-# REQUEST SCHEMAS (Lo que recibe el servidor)
+# REQUEST SCHEMAS (What the server receives)
 # ============================================================================
 
 class VideoUploadRequest(BaseModel):
@@ -27,12 +27,12 @@ class VideoUploadRequest(BaseModel):
 
 
 # ============================================================================
-# RESPONSE SCHEMAS (Lo que devuelve el servidor)
+# RESPONSE SCHEMAS (What the server returns)
 # ============================================================================
 
 class VideoResponse(BaseModel):
     """
-    Schema for GET /videos endpoint (lista de vídeos)
+    Schema for GET /videos endpoint (list of videos)
 
     Returns basic video metadata without detections
     """
@@ -54,7 +54,7 @@ class VideoResponse(BaseModel):
 
 class DetectionResponse(BaseModel):
     """
-    Schema for cada detección individual
+    Schema for each individual detection
 
     Represents a single logo detection in a frame
     """
@@ -113,7 +113,7 @@ class VideoResultsResponse(BaseModel):
 
 class UploadResponseSchema(BaseModel):
     """
-    Response para POST /upload
+    Response for POST /upload
 
     Returned immediately after file upload starts processing
     """

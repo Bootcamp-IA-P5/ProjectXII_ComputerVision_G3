@@ -409,7 +409,7 @@ if __name__ == "__main__":
     # ASGI >> Asynchronous Server Gateway Interface
     
     uvicorn.run(
-        app,                # La aplicacion FasAPI
+        app,                # La aplicación FastAPI
         host=API_HOST,      # Host, escucha en todas las IPs
         port=API_PORT,      # Puerto
         reload=True,        # Reinicia cada vez que cambias codigo (dev mode)

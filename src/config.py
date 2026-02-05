@@ -37,6 +37,7 @@ LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
 # API Configuration
 API_HOST = os.getenv("API_HOST", "0.0.0.0")
 API_PORT = int(os.getenv("API_PORT", "8000"))
+API_RELOAD = os.getenv("API_RELOAD", "false").lower() in ("true", "1", "yes")
 
 # CORS - Allowed Origins
 ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000").split(",")

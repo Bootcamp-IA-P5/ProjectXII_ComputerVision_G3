@@ -3,7 +3,6 @@ Celery tasks for async video processing
 """
 
 from celery import shared_task
-from src.celeryconfig import app
 from src.model_inference.yolo_inference import YOLOInference
 from src.video_processor.video_processor import VideoProcessor
 from src.config import YOLO_MODEL_PATH, CONFIDENCE_THRESHOLD, IOU_THRESHOLD, DEVICE

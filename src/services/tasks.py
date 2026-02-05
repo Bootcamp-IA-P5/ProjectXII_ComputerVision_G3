@@ -98,7 +98,7 @@ def process_video_task(self, video_id: int, video_path: str,
         )
         
         # Update task status: complete
-        self.update_state(state="PROCESSING", meta={"current": 100, "status": "Complete"})
+        self.update_state(state="SUCCESS", meta={"current": 100, "status": "Complete"})
         
         logger.info(f"Video {video_id} processed successfully. Detections: {results['statistics']['total_detections']}")
 
@@ -114,8 +114,5 @@ def process_video_task(self, video_id: int, video_path: str,
             state="FAILURE",
             meta={"error": str(e), "video_id": video_id}
         )
-        return {
-            "video_id": video_id,
-            "success": False,
-            "error": str(e),
-        }
+        # Re-raise the exception so Celery marks the task as failed
+        raise

@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Dict, List, Any, Optional
 from src.model_inference.yolo_inference import YOLOInference
 from src.video_processor.video_processor import VideoProcessor
-from src.config import VIDEO_UPLOAD_DIR, CROPS_OUTPUT_DIR
+from src.config import VIDEO_UPLOAD_DIR
 import logging
 
 logger = logging.getLogger(__name__)
@@ -56,7 +56,7 @@ class AnalysisService:
             if not video_path_obj.exists():
                 raise FileNotFoundError(f"Video file not found: {video_path}")
             
-            results = self.processor.process_video(video_path, fps_sample)
+            results = self.processor.process_video(video_path)
             
             
             metadata = {

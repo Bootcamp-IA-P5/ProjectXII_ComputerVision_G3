@@ -160,8 +160,10 @@ async def upload_video(
         # Lee contenido del archivo
         contents = await file.read()
         
-        # Crear ruta:
-        file_path = VIDEO_UPLOAD_DIR / file.filename
+        # Crear ruta con nombre único para evitar sobrescrituras
+        original_name = Path(file.filename)
+        unique_filename = f"{uuid4().hex}{original_name.suffix}"
+        file_path = VIDEO_UPLOAD_DIR / unique_filename
         
         # Escribe contenido a disco 
         file_path.write_bytes(contents)
@@ -409,7 +411,7 @@ if __name__ == "__main__":
     # ASGI >> Asynchronous Server Gateway Interface
     
     uvicorn.run(
-        app,                # La aplicacion FasAPI
+        app,                # La aplicación FastAPI
         host=API_HOST,      # Host, escucha en todas las IPs
         port=API_PORT,      # Puerto
         reload=True,        # Reinicia cada vez que cambias codigo (dev mode)

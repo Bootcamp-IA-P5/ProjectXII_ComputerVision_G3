@@ -24,5 +24,6 @@ app.conf.update(
     enable_utc=True,
     task_track_started=True,
     task_time_limit=3600,       # Hard limit: 1h per task (kill if exceeds)
-    task_soft_time_limit=3000,  # Soft limit: 50m (raise exception)   
+    task_soft_time_limit=3000,  # Soft limit: 50m (raise exception)
+    imports=["src.services.tasks"],
 )

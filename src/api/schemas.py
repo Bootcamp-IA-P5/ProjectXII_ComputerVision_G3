@@ -119,7 +119,7 @@ class UploadResponseSchema(BaseModel):
     """
     video_id: int
     filename: str
-    status: str  # "pending", "processing", "completed", "failed"
+    status: str  # "queued", "processing", "completed", "failed"
     message: str
 
     class Config:

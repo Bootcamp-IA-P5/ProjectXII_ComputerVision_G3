@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Dict, List, Any, Optional
 from src.model_inference.yolo_inference import YOLOInference
 from src.video_processor.video_processor import VideoProcessor
-from src.config import VIDEO_UPLOAD_DIR, CROPS_OUTPUT_DIR
+from src.config import VIDEO_UPLOAD_DIR
 import logging
 
 logger = logging.getLogger(__name__)

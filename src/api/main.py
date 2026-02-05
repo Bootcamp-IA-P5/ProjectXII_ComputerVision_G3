@@ -395,9 +395,9 @@ async def get_task_status(task_id: str):
     """
     Get Celery task status (for frontend progress tracking)
     """
-    from src.services.tasks import process_video_task
+    from celery.result import AsyncResult
     
-    task = process_video_task.AsyncResult(task_id)
+    task = AsyncResult(task_id)
     
     return {
         "task_id": task_id,

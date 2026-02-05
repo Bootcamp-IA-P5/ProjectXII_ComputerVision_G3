@@ -14,10 +14,11 @@ logger = logging.getLogger(__name__)
 
 # Create engine with appropriate pool settings
 # Use NullPool for connection issues with remote databases (Supabase)
+database_url = DATABASE_URL or ""
 engine = create_engine(
-    DATABASE_URL,
+    database_url,
     echo=False,
-    poolclass=NullPool if "postgresql" in DATABASE_URL else None,
+    poolclass=NullPool if "postgresql" in database_url else None,
 )
 
 # Create session factory

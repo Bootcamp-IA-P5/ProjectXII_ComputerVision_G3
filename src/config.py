@@ -43,7 +43,6 @@ ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000").split(",
 
 # VIDEO Upload Directory
 VIDEO_UPLOAD_DIR = DATA_DIR / "uploads" / "videos"
-VIDEO_UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
 # Ensure directories exist
 def ensure_directories_initialized() -> None:

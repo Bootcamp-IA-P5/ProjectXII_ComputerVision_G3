@@ -85,20 +85,11 @@ def process_video_task(self, video_id: int, video_path: str,
         # Get cached YOLO model (loaded once per worker process)
         model = get_model()
         
-        # Override thresholds if different from cached model
-        if (confidence_threshold != model.confidence_threshold or 
-            iou_threshold != model.iou_threshold):
-            # Note: These will be passed to predict() calls, not changing the model instance
-            logger.info(
-                f"Using custom thresholds: conf={confidence_threshold}, iou={iou_threshold} "
-                f"(model defaults: conf={model.confidence_threshold}, iou={model.iou_threshold})"
-            )
-        
         # Update task status: processing video
         self.update_state(state="PROCESSING", meta={"current": 10, "status": "Processing video..."})
         
         # Process video with VideoProcessor
-        # Pass custom thresholds to override cached model defaults if needed
+        # Custom thresholds are passed to process_video which forwards them to predict() calls
         processor = VideoProcessor(model=model, fps_sample=fps_sample)
         results = processor.process_video(
             video_path,

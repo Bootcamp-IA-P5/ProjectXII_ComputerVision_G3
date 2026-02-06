@@ -54,7 +54,7 @@ dataset_yolov8/
   - Valid: 402 imágenes
   - Test: 670 imágenes
 - **Clases (logos)**: 175
-- **Tamaño aproximado**: ~56 MB
+- **Tamaño aproximado**: depende de la exportación desde Roboflow; consulta el tamaño exacto al descargar el dataset.
 
 ## 🏆 Top 15 Logos más frecuentes
 

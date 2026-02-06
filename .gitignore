@@ -33,9 +33,11 @@ dataset_yolov8/test/labels/*.txt
 # Ignorar archivos cache de YOLO
 dataset_yolov8/*/labels.cache
 
+# Ignorar configuraciones locales generadas automáticamente
+dataset_yolov8/data_local*.yaml
+
 # Permitir archivos de configuración y documentación
 !dataset_yolov8/data.yaml
-!dataset_yolov8/data_local*.yaml
 !dataset_yolov8/README*.txt
 !dataset_yolov8/README*.md
 !dataset_yolov8/**/.gitkeep

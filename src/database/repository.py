@@ -41,6 +41,7 @@ class DetectionRepository:
         result: Dict[str, Any],
         model_name: str = None,
         confidence_threshold: float = None,
+        replace_existing: bool = True,
     ) -> Video:
         """
         Save complete video processing result to database
@@ -52,6 +53,7 @@ class DetectionRepository:
             result: Output dictionary from VideoProcessor.process_video()
             model_name: Name of the YOLO model used (optional)
             confidence_threshold: Confidence threshold used (optional)
+            replace_existing: If True, delete existing video with same filepath first
             
         Returns:
             Created Video ORM object with ID
@@ -62,11 +64,21 @@ class DetectionRepository:
         if "error" in result:
             raise ValueError(f"Cannot save error result: {result['error']}")
         
+        filepath = result["video_path"]
+        
         with get_db_session() as session:
+            # Check for existing video with same filepath
+            if replace_existing:
+                existing = session.query(Video).filter(Video.filepath == filepath).first()
+                if existing:
+                    logger.info(f"Replacing existing video record: {existing.filename} (ID={existing.id})")
+                    session.delete(existing)
+                    session.flush()
+            
             # Create video record
             video = Video(
-                filename=result["video_path"].split("/")[-1].split("\\")[-1],
-                filepath=result["video_path"],
+                filename=filepath.split("/")[-1].split("\\")[-1],
+                filepath=filepath,
                 total_frames=result["total_frames"],
                 processed_frames=result["processed_frames"],
                 fps=result["fps"],

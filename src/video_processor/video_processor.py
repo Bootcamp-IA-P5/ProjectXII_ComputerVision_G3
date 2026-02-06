@@ -6,12 +6,16 @@ Handles video file loading, frame extraction, and batch detection
 import cv2
 import numpy as np
 from pathlib import Path
-from typing import Dict, List, Optional, Callable
+from typing import Dict, List, Optional, Callable, TYPE_CHECKING
 import logging
 from tqdm import tqdm
 
 from src.config import VIDEO_EXTENSIONS, DEFAULT_FPS_SAMPLE
 from src.model_inference import YOLOInference
+
+# Lazy import to avoid circular dependencies
+if TYPE_CHECKING:
+    from src.database.repository import DetectionRepository
 
 logger = logging.getLogger(__name__)
 
@@ -198,6 +202,8 @@ class VideoProcessor:
         video_path: str,
         conf: Optional[float] = None,
         iou: Optional[float] = None,
+        save_to_db: bool = False,
+        model_name: Optional[str] = None,
     ) -> Dict:
         """
         Complete pipeline: load video -> extract frames -> process frames
@@ -206,6 +212,8 @@ class VideoProcessor:
             video_path: Path to video file
             conf: Confidence threshold override
             iou: IoU threshold override
+            save_to_db: If True, automatically save results to database
+            model_name: Name of model used (stored in DB if save_to_db=True)
             
         Returns:
             Dictionary with complete processing results:
@@ -216,7 +224,8 @@ class VideoProcessor:
                 "fps": float,
                 "duration_seconds": float,
                 "detections_by_frame": {...},
-                "statistics": {...}
+                "statistics": {...},
+                "db_video_id": int (if save_to_db=True)
             }
         """
         try:
@@ -245,6 +254,28 @@ class VideoProcessor:
                 "detections_by_frame": detections,
                 "statistics": stats,
             }
+            
+            # Auto-save to database if requested
+            if save_to_db:
+                try:
+                    from src.database.repository import DetectionRepository
+                    from src.database.database import init_db
+                    
+                    # Ensure tables exist
+                    init_db()
+                    
+                    # Save results
+                    repo = DetectionRepository()
+                    video = repo.save_video_result(
+                        result,
+                        model_name=model_name,
+                        confidence_threshold=conf,
+                    )
+                    result["db_video_id"] = video.id
+                    logger.info(f"Saved to database with ID: {video.id}")
+                except Exception as e:
+                    logger.error(f"Failed to save to database: {e}")
+                    result["db_error"] = str(e)
             
             logger.info("Video processing completed")
             return result

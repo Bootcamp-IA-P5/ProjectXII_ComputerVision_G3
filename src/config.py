@@ -16,8 +16,8 @@ MODELS_DIR = PROJECT_ROOT / "models"
 DATASET_DIR = PROJECT_ROOT / "dataset_yolov8"
 
 # Model configuration
-YOLO_MODEL_PATH = MODELS_DIR / "trained" / "best_yolov8x_Kiru.pt"
-YOLO_MODEL_PATH_ONNX = MODELS_DIR / "trained" / "best_yolov8x_Kiru.onnx"
+YOLO_MODEL_PATH = MODELS_DIR / "trained" / "yolo11x.pt"
+YOLO_MODEL_PATH_ONNX = MODELS_DIR / "trained" / "yolo11x.onnx"
 
 # Video processing
 VIDEO_EXTENSIONS = {".mp4", ".avi", ".mov", ".mkv", ".flv", ".wmv"}
@@ -42,7 +42,7 @@ API_RELOAD = os.getenv("API_RELOAD", "false").lower() in ("true", "1", "yes")
 # CORS - Allowed Origins
 ALLOWED_ORIGINS = [
     origin.strip()
-    for origin in os.getenv("ALLOWED_ORIGINS", "http://localhost:3000").split(",")
+    for origin in os.getenv("ALLOWED_ORIGINS", "http://localhost:5173,http://localhost:5174,http://127.0.0.1:5173,http://127.0.0.1:5174,http://localhost:3000").split(",")
 ]
 
 # VIDEO Upload Directory

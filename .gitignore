@@ -68,3 +68,6 @@ Thumbs.db
 
 # Ignorar script de análisis local
 /scripts/dataset_analysis.py
+
+# video files
+/videos

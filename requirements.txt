@@ -18,6 +18,7 @@ pydantic==2.4.2
 
 # ========== BASE DE DATOS ==========
 sqlalchemy==2.0.23
+psycopg2-binary==2.9.9
 
 # ========== CONFIGURACIÓN & UTILS ==========
 python-dotenv==1.0.0

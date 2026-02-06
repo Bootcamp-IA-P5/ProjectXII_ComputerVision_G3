@@ -33,7 +33,6 @@ Después de descargar, la estructura debe ser:
 ```
 dataset_yolov8/
 ├── data.yaml                # Configuración del dataset (incluido en repo)
-├── data_local_v11x.yaml    # Configuración local alternativa
 ├── README.dataset.txt      # Info del dataset
 ├── README.roboflow.txt     # Info de Roboflow
 ├── train/

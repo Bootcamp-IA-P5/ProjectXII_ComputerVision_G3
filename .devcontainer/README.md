@@ -63,7 +63,7 @@ bash scripts/select-devcontainer-mode.sh nvidia-gpu
 ### Configuration
 - **Base Image**: `nvidia/cuda:12.1.0-runtime-ubuntu22.04`
 - **Python Version**: 3.11
-- **PyTorch**: CUDA-enabled 2.1.2+cu121 (installed via `postCreateCommand`)
+- **PyTorch**: CUDA-enabled 2.1.2+cu121 installed first, then requirements.txt
 - **GPU Access**: `--gpus all`
 - **Shared Memory**: 8GB (for data loading)
 

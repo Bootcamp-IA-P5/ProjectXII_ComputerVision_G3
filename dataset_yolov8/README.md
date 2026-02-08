@@ -124,5 +124,5 @@ Only included:
 ## 📚 Additional Documentation
 
 - See complete logo analysis: `scripts/analyze_dataset_logos.py`
-- See prompts for video generation: `examples/sora_prompts_logos.txt`
+- See prompts for video generation in the local (git-ignored) file: `examples/sora_prompts_logos.txt`
 - Training notebooks: `notebooks/`

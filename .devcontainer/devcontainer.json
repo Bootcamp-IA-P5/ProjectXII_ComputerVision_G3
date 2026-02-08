@@ -43,11 +43,11 @@
   
   // Add ~/.local/bin to PATH for user-installed scripts (black, pytest, etc.)
   "remoteEnv": {
-    "PATH": "${containerEnv:PATH}:/root/.local/bin"
+    "PATH": "${containerEnv:PATH}:${containerEnv:HOME}/.local/bin"
   },
   
-  // Install PyTorch CPU version first, then other dependencies
-  "postCreateCommand": "pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cpu && pip3 install --user -r requirements.txt && pip3 install --user -r requirements-dev.txt",
+  // Install Python dependencies from pinned requirement files
+  "postCreateCommand": "pip3 install --user -r requirements.txt && pip3 install --user -r requirements-dev.txt",
   
   // Port forwarding for development servers
   "forwardPorts": [8000, 3000, 5173],

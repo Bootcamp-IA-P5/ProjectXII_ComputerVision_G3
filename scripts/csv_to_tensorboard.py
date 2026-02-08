@@ -60,9 +60,15 @@ def csv_to_tensorboard(run_name: str, overwrite: bool = False) -> bool:
         return False
     
     # Check if TensorBoard logs already exist
-    if tb_dir.exists() and not overwrite:
-        print(f"  ⏭️  TensorBoard logs already exist for {run_name} (use --overwrite)")
-        return True
+    if tb_dir.exists():
+        if not overwrite:
+            print(f"  ⏭️  TensorBoard logs already exist for {run_name} (use --overwrite)")
+            return True
+        else:
+            # Remove existing directory to avoid merged/duplicated scalars
+            import shutil
+            shutil.rmtree(tb_dir)
+            print(f"  🗑️  Removed existing TensorBoard logs for clean overwrite")
     
     print(f"  📊 Converting {run_name}...")
     

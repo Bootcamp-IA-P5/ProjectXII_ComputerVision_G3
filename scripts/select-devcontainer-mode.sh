@@ -150,8 +150,16 @@ if [ -z "$1" ]; then
             ;;
     esac
 else
-    # Normalize the input to lowercase
-    MODE=$(echo "$1" | tr '[:upper:]' '[:lower:]')
+    # Normalize the input to lowercase and map aliases to canonical modes
+    input_mode=$(echo "$1" | tr '[:upper:]' '[:lower:]')
+    case "$input_mode" in
+        gpu)
+            MODE="nvidia-gpu"
+            ;;
+        *)
+            MODE="$input_mode"
+            ;;
+    esac
 fi
 TARGET_FILE="$DEVCONTAINER_DIR/devcontainer.$MODE"
 

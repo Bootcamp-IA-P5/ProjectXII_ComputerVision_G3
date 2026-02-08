@@ -16,5 +16,8 @@ mypy==1.7.0
 ipython==8.17.2
 ipdb==0.13.13
 
+# ========== VISUALIZATION & METRICS ==========
+tensorboard==2.20.0
+
 # ========== API TESTING ==========
 httpx==0.25.1

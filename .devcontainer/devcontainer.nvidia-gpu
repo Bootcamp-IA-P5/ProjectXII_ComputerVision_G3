@@ -1,18 +1,27 @@
 // =============================================================================
-// DevContainer Configuration: CPU Mode (Production/Development)
+// DevContainer Configuration: NVIDIA GPU Mode (Training)
 // =============================================================================
-// Use this configuration for development without GPU or production deployment.
-// To activate: bash scripts/select-devcontainer-mode.sh cpu  (OUTSIDE container)
+// Use this configuration when training YOLO models locally with NVIDIA GPU.
+// To activate: bash scripts/select-devcontainer-mode.sh nvidia-gpu  (OUTSIDE container)
 // Then rebuild the container in VS Code.
 // =============================================================================
 {
-  "name": "ProjectXII CV - CPU Only",
+  "name": "ProjectXII CV - NVIDIA GPU",
   
-  // Use Microsoft's Python image (no CUDA needed)
-  "image": "mcr.microsoft.com/devcontainers/python:2-3.11-trixie",
+  // Use NVIDIA CUDA image directly (no Dockerfile needed)
+  "image": "nvidia/cuda:12.1.0-runtime-ubuntu22.04",
+  
+  // GPU configuration - requires NVIDIA Container Toolkit
+  "runArgs": [
+    "--gpus", "all",
+    "--shm-size=8gb"
+  ],
   
   "features": {
-    "ghcr.io/devcontainers/features/git:1": {}
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.11"
+    }
   },
   
   "customizations": {
@@ -46,8 +55,8 @@
     "PATH": "${containerEnv:PATH}:${containerEnv:HOME}/.local/bin"
   },
   
-  // Install Python dependencies from pinned requirement files
-  "postCreateCommand": "pip3 install --user -r requirements.txt && pip3 install --user -r requirements-dev.txt",
+  // Install CUDA-enabled PyTorch, then other dependencies
+  "postCreateCommand": "pip3 install --user torch==2.1.2 torchvision==0.16.2 --index-url https://download.pytorch.org/whl/cu121 && pip3 install --user -r requirements.txt && pip3 install --user -r requirements-dev.txt",
   
   // Port forwarding for development servers
   "forwardPorts": [8000, 3000, 5173, 6006],

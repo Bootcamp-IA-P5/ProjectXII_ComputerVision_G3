@@ -1,114 +1,114 @@
 # Dataset YOLOv8 - Logo Detection
 
-Este directorio contiene la configuración del dataset para detección de logos usando YOLOv8/YOLO11.
+This directory contains the dataset configuration for logo detection using YOLOv8/YOLO11.
 
-## 📥 Descargar el Dataset
+## 📥 Download the Dataset
 
-El dataset **NO** está incluido en el repositorio para mantener el tamaño del repo manejable.
+The dataset is **NOT** included in the repository to keep the repo size manageable.
 
-### Opción 1: Roboflow (Recomendado)
-Descarga el dataset desde Roboflow Universe:
+### Option 1: Roboflow (Recommended)
+Download the dataset from Roboflow Universe:
 
 ```bash
-# URL del dataset
+# Dataset URL
 https://universe.roboflow.com/sekant/my-first-project-4wl7u/dataset/1
 
-# Formato: YOLOv8
-# Licencia: CC BY 4.0
+# Format: YOLOv8
+# License: CC BY 4.0
 ```
 
-### Opción 2: Descarga directa (si disponible)
-Si el equipo tiene una URL de descarga directa, úsala aquí:
+### Option 2: Direct Download (if available)
+If the team has a direct download URL, use it here:
 
 ```bash
-# Descargar y descomprimir
-wget <URL_DEL_DATASET> -O dataset_yolov8.zip
+# Download and extract
+wget <DATASET_URL> -O dataset_yolov8.zip
 unzip dataset_yolov8.zip -d dataset_yolov8/
 ```
 
-## 📁 Estructura del Dataset
+## 📁 Dataset Structure
 
-Después de descargar, la estructura debe ser:
+After downloading, the structure should be:
 
 ```
 dataset_yolov8/
-├── data.yaml                # Configuración del dataset (incluido en repo)
-├── README.dataset.txt      # Info del dataset
-├── README.roboflow.txt     # Info de Roboflow
+├── data.yaml                # Dataset configuration (included in repo)
+├── README.dataset.txt      # Dataset info
+├── README.roboflow.txt     # Roboflow info
 ├── train/
-│   ├── images/             # Imágenes de entrenamiento
-│   └── labels/             # Anotaciones de entrenamiento
+│   ├── images/             # Training images
+│   └── labels/             # Training annotations
 ├── valid/
-│   ├── images/             # Imágenes de validación
-│   └── labels/             # Anotaciones de validación
+│   ├── images/             # Validation images
+│   └── labels/             # Validation annotations
 └── test/
-    ├── images/             # Imágenes de test
-    └── labels/             # Anotaciones de test
+    ├── images/             # Test images
+    └── labels/             # Test annotations
 ```
 
-## 📊 Estadísticas del Dataset
+## 📊 Dataset Statistics
 
-- **Total de imágenes**: 3,304
-  - Train: 2,232 imágenes
-  - Valid: 402 imágenes
-  - Test: 670 imágenes
-- **Clases (logos)**: 175
-- **Tamaño aproximado**: depende de la exportación desde Roboflow; consulta el tamaño exacto al descargar el dataset.
+- **Total images**: 3,304
+  - Train: 2,232 images
+  - Valid: 402 images
+  - Test: 670 images
+- **Classes (logos)**: 175
+- **Approximate size**: depends on Roboflow export; check exact size when downloading.
 
-## 🏆 Top 15 Logos más frecuentes
+## 🏆 Top 15 Most Frequent Logos
 
-1. **Outlook** (195 imágenes)
-2. **PayPal** (155 imágenes)
-3. **Chase Personal Banking** (100 imágenes)
-4. **Bank of America** (93 imágenes)
-5. **Facebook** (56 imágenes)
-6. **Adobe** (56 imágenes)
-7. **DHL** (52 imágenes)
-8. **Amazon** (50 imágenes)
-9. **Netflix** (45 imágenes)
-10. **Dropbox** (44 imágenes)
-11. **Apple** (41 imágenes)
-12. **eBay** (40 imágenes)
-13. **Alibaba** (39 imágenes)
-14. **Deutsche Telekom** (35 imágenes)
-15. **Google** (35 imágenes)
+1. **Outlook** (195 images)
+2. **PayPal** (155 images)
+3. **Chase Personal Banking** (100 images)
+4. **Bank of America** (93 images)
+5. **Facebook** (56 images)
+6. **Adobe** (56 images)
+7. **DHL** (52 images)
+8. **Amazon** (50 images)
+9. **Netflix** (45 images)
+10. **Dropbox** (44 images)
+11. **Apple** (41 images)
+12. **eBay** (40 images)
+13. **Alibaba** (39 images)
+14. **Deutsche Telekom** (35 images)
+15. **Google** (35 images)
 
-## ⚙️ Configuración
+## ⚙️ Configuration
 
-El archivo [`data.yaml`](data.yaml) contiene:
-- Rutas a las imágenes de train/valid/test
-- Número de clases (175)
-- Nombres de todas las clases
-- Metadatos de Roboflow
+The [`data.yaml`](data.yaml) file contains:
+- Paths to train/valid/test images
+- Number of classes (175)
+- Names of all classes
+- Roboflow metadata
 
-**Importante**: Las rutas en `data.yaml` están configuradas para funcionar dentro del contenedor Docker.
+**Important**: Paths in `data.yaml` are configured to work inside the Docker container.
 
-## 🐳 Uso con Docker
+## 🐳 Usage with Docker
 
-Si estás usando Docker (recomendado), el dataset debe estar en:
+If using Docker (recommended), the dataset should be located at:
 ```
 /workspace/dataset_yolov8/
 ```
 
-El volumen se monta automáticamente según el `docker-compose.yml`.
+The volume is automatically mounted according to `docker-compose.yml`.
 
-## 📝 Verificar Dataset
+## 📝 Verify Dataset
 
-Para verificar que el dataset se descargó correctamente:
+To verify the dataset was downloaded correctly:
 
 ```bash
-# Desde la raíz del proyecto
+# From the project root
 python scripts/analyze_dataset_logos.py
 ```
 
-Este script mostrará:
-- Número de imágenes por split (train/valid/test)
-- Distribución de logos
-- Estadísticas detalladas
+This script will display:
+- Number of images per split (train/valid/test)
+- Logo distribution
+- Detailed statistics
 
-## 🚫 Ignorado en Git
+## 🚫 Ignored in Git
 
-Las siguientes carpetas/archivos están ignorados en `.gitignore`:
+The following folders/files are ignored in `.gitignore`:
 - `dataset_yolov8/train/images/`
 - `dataset_yolov8/train/labels/`
 - `dataset_yolov8/valid/images/`
@@ -116,13 +116,13 @@ Las siguientes carpetas/archivos están ignorados en `.gitignore`:
 - `dataset_yolov8/test/images/`
 - `dataset_yolov8/test/labels/`
 
-Solo se incluyen:
-- ✅ `data.yaml` (configuración)
-- ✅ Este `README.md`
-- ✅ Estructura de carpetas (`.gitkeep`)
+Only included:
+- ✅ `data.yaml` (configuration)
+- ✅ This `README.md`
+- ✅ Folder structure (`.gitkeep`)
 
-## 📚 Documentación Adicional
+## 📚 Additional Documentation
 
-- Ver análisis completo de logos: `scripts/analyze_dataset_logos.py`
-- Ver prompts para generación de videos: `examples/sora_prompts_logos.txt`
-- Notebooks de entrenamiento: `notebooks/`
+- See complete logo analysis: `scripts/analyze_dataset_logos.py`
+- See prompts for video generation in the local (git-ignored) file: `examples/sora_prompts_logos.txt`
+- Training notebooks: `notebooks/`

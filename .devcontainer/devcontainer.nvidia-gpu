@@ -59,10 +59,11 @@
   "postCreateCommand": "pip3 install --user torch==2.1.2 torchvision==0.16.2 --index-url https://download.pytorch.org/whl/cu121 && pip3 install --user -r requirements.txt && pip3 install --user -r requirements-dev.txt",
   
   // Port forwarding for development servers
-  "forwardPorts": [8000, 3000, 5173],
+  "forwardPorts": [8000, 3000, 5173, 6006],
   "portsAttributes": {
     "8000": {"label": "FastAPI", "onAutoForward": "notify"},
     "3000": {"label": "React Dev", "onAutoForward": "notify"},
-    "5173": {"label": "Vite", "onAutoForward": "notify"}
+    "5173": {"label": "Vite Dev", "onAutoForward": "notify"},
+    "6006": {"label": "TensorBoard", "onAutoForward": "notify"}
   }
 }

@@ -75,7 +75,7 @@ def csv_to_tensorboard(run_name: str, overwrite: bool = False) -> bool:
     # Read CSV and write to TensorBoard
     writer = SummaryWriter(log_dir=str(tb_dir))
     
-    with open(csv_path, 'r') as f:
+    with open(csv_path, 'r', newline='') as f:
         reader = csv.DictReader(f)
         
         for row in reader:

@@ -20,4 +20,4 @@ ipdb==0.13.13
 tensorboard==2.20.0
 
 # ========== API TESTING ==========
-httpx==0.24.1
+httpx==0.25.1

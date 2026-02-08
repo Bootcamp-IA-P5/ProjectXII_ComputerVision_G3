@@ -97,6 +97,16 @@ def process_video_task(self, video_id: int, video_path: str,
             iou=iou_threshold
         )
         
+        # Save results to database
+        if results and "error" not in results:
+            from src.database.repository import DetectionRepository
+            repo = DetectionRepository()
+            repo.save_video_result(
+                results,
+                model_name="yolov8x_Kiru", 
+                confidence_threshold=confidence_threshold
+            )
+        
         # Update task status: complete
         self.update_state(state="SUCCESS", meta={"current": 100, "status": "Complete"})
         

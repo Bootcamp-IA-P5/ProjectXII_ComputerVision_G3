@@ -68,28 +68,42 @@ class DetectionRepository:
         
         with get_db_session() as session:
             # Check for existing video with same filepath
-            if replace_existing:
-                existing = session.query(Video).filter(Video.filepath == filepath).first()
-                if existing:
-                    logger.info(f"Replacing existing video record: {existing.filename} (ID={existing.id})")
-                    session.delete(existing)
-                    session.flush()
+            video = session.query(Video).filter(Video.filepath == filepath).first()
             
-            # Create video record
-            video = Video(
-                filename=filepath.split("/")[-1].split("\\")[-1],
-                filepath=filepath,
-                total_frames=result["total_frames"],
-                processed_frames=result["processed_frames"],
-                fps=result["fps"],
-                duration_seconds=result["duration_seconds"],
-                frame_height=result["frame_dimensions"][0],
-                frame_width=result["frame_dimensions"][1],
-                model_name=model_name,
-                confidence_threshold=confidence_threshold,
-                processed_at=datetime.utcnow(),
-            )
-            session.add(video)
+            if video:
+                logger.info(f"Updating existing video record: {video.filename} (ID={video.id})")
+                # Update metadata
+                video.total_frames = result["total_frames"]
+                video.processed_frames = result["processed_frames"]
+                video.fps = result["fps"]
+                video.duration_seconds = result["duration_seconds"]
+                video.frame_height = result["frame_dimensions"][0]
+                video.frame_width = result["frame_dimensions"][1]
+                video.model_name = model_name
+                video.confidence_threshold = confidence_threshold
+                video.processed_at = datetime.utcnow()
+                
+                # Clear existing detections/stats if replace_existing is True
+                if replace_existing:
+                    video.detections = []
+                    video.brand_stats = []
+            else:
+                # Create video record
+                video = Video(
+                    filename=filepath.split("/")[-1].split("\\")[-1],
+                    filepath=filepath,
+                    total_frames=result["total_frames"],
+                    processed_frames=result["processed_frames"],
+                    fps=result["fps"],
+                    duration_seconds=result["duration_seconds"],
+                    frame_height=result["frame_dimensions"][0],
+                    frame_width=result["frame_dimensions"][1],
+                    model_name=model_name,
+                    confidence_threshold=confidence_threshold,
+                    processed_at=datetime.utcnow(),
+                )
+                session.add(video)
+            
             session.flush()  # Get video.id
             
             # Process detections by frame

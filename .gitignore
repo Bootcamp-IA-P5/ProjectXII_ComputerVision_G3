@@ -50,10 +50,15 @@ dataset_yolov8.zip
 # =============================================================================
 # YOLO / Ultralytics Output
 # =============================================================================
-# Ignorar la carpeta runs (logs masivos de entrenamiento)
-runs/
-# ...pero si quieres puedes des-ignorar los resultados resumen (opcional)
-# !runs/**/args.yaml
+# Keep runs/ structure but ignore heavy files
+runs/**/weights/
+runs/**/*.jpg
+runs/**/*.png
+runs/**/tensorboard_logs/
+
+# Keep these for TensorBoard and reproducibility:
+# - results.csv (training metrics)
+# - args.yaml (training configuration)
 
 # Ignorar modelos base descargados automáticamente
 yolov8n.pt

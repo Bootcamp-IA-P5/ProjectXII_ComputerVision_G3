@@ -201,7 +201,7 @@ if [ -f "$TARGET_FILE" ]; then
             echo "   Purpose: Training YOLO models with GPU acceleration"
             echo ""
             echo "   Configuration:"
-            echo "   - Uses Dockerfile with NVIDIA CUDA 12.1 runtime"
+            echo "   - Uses NVIDIA CUDA 12.1 base image (no custom Dockerfile)"
             echo "   - Enables all available NVIDIA GPUs (--gpus all)"
             echo "   - Allocates 8GB shared memory for GPU operations"
             echo ""

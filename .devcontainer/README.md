@@ -121,8 +121,14 @@ YOLO training generates CSV files in `runs/detect/*/results.csv`. Convert them t
 # Convert a specific training run
 python scripts/csv_to_tensorboard.py logo_detection_v1
 
-# Convert all runs
-python scripts/csv_to_tensorboard.py --all
+# Convert multiple specific runs
+python scripts/csv_to_tensorboard.py logo_detection_v1 yolo11x_drive_run
+
+# Convert all runs (no arguments)
+python scripts/csv_to_tensorboard.py
+
+# List available runs
+python scripts/csv_to_tensorboard.py --list
 
 # Overwrite existing TensorBoard logs
 python scripts/csv_to_tensorboard.py logo_detection_v1 --overwrite
@@ -131,8 +137,11 @@ python scripts/csv_to_tensorboard.py logo_detection_v1 --overwrite
 ### Launch TensorBoard
 
 ```bash
-# Start TensorBoard server
-tensorboard --logdir runs/tensorboard_logs --port 6006
+# Start TensorBoard server (view all runs)
+tensorboard --logdir runs/detect --port 6006
+
+# Or view a specific run only
+tensorboard --logdir runs/detect/logo_detection_v1/tensorboard_logs --port 6006
 ```
 
 Then open in your browser: **http://localhost:6006**
@@ -285,7 +294,6 @@ Generate ONNX models locally when needed.
 | `devcontainer.json` | Active configuration (CPU or GPU) |
 | `devcontainer.cpu` | CPU mode template |
 | `devcontainer.nvidia-gpu` | GPU mode template |
-| `Dockerfile` | Custom CUDA image build (GPU mode) |
 
 **Note**: Do not edit `devcontainer.json` directly. Use the selector script to switch modes.
 

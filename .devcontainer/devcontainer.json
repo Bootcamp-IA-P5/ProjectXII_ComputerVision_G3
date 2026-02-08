@@ -1,27 +1,18 @@
 // =============================================================================
-// DevContainer Configuration: NVIDIA GPU Mode (Training)
+// DevContainer Configuration: CPU Mode (Production/Development)
 // =============================================================================
-// Use this configuration when training YOLO models locally with NVIDIA GPU.
-// To activate: bash scripts/select-devcontainer-mode.sh nvidia-gpu  (OUTSIDE container)
+// Use this configuration for development without GPU or production deployment.
+// To activate: bash scripts/select-devcontainer-mode.sh cpu  (OUTSIDE container)
 // Then rebuild the container in VS Code.
 // =============================================================================
 {
-  "name": "ProjectXII CV - NVIDIA GPU",
+  "name": "ProjectXII CV - CPU Only",
   
-  // Use NVIDIA CUDA image directly (no Dockerfile needed)
-  "image": "nvidia/cuda:12.1.0-runtime-ubuntu22.04",
-  
-  // GPU configuration - requires NVIDIA Container Toolkit
-  "runArgs": [
-    "--gpus", "all",
-    "--shm-size=8gb"
-  ],
+  // Use Microsoft's Python image (no CUDA needed)
+  "image": "mcr.microsoft.com/devcontainers/python:2-3.11-trixie",
   
   "features": {
-    "ghcr.io/devcontainers/features/git:1": {},
-    "ghcr.io/devcontainers/features/python:1": {
-      "version": "3.10"
-    }
+    "ghcr.io/devcontainers/features/git:1": {}
   },
   
   "customizations": {
@@ -55,8 +46,8 @@
     "PATH": "${containerEnv:PATH}:/root/.local/bin"
   },
   
-  // Install dependencies after container creation
-  "postCreateCommand": "pip3 install --user -r requirements.txt && pip3 install --user -r requirements-dev.txt",
+  // Install PyTorch CPU version first, then other dependencies
+  "postCreateCommand": "pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cpu && pip3 install --user -r requirements.txt && pip3 install --user -r requirements-dev.txt",
   
   // Port forwarding for development servers
   "forwardPorts": [8000, 3000, 5173],

@@ -391,7 +391,7 @@ python3 -c "import torch; print(torch.cuda.is_available())"
 python scripts/csv_to_tensorboard.py yolo11x_training
 
 # 6. Launch TensorBoard
-tensorboard --logdir runs/tensorboard_logs --port 6006
+tensorboard --logdir runs/detect --port 6006
 ```
 
 ### Development with CPU

@@ -17,4 +17,4 @@ ipython==8.17.2
 ipdb==0.13.13
 
 # ========== API TESTING ==========
-httpx==0.25.1
+httpx==0.24.1

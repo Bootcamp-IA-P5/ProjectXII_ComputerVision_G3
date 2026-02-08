@@ -34,8 +34,8 @@ from sqlalchemy.orm import Session
 
 from src.config import API_HOST, API_PORT, API_RELOAD, ALLOWED_ORIGINS, VIDEO_UPLOAD_DIR, DEVICE
 from src.database.init_db import init_db, get_db
-# UNCOMMENT when DB and models are implemented
-# from src.database.models import Video, Detection, Brand, AnalysisSession
+# Database models for ORM queries
+from src.database.models import Video, Detection, Brand, VideoBrandStats
 from src.api.schemas import (
     VideoUploadRequest,
     VideoResponse,
@@ -106,9 +106,9 @@ async def shutdown_event():
 @app.get("/")
 async def root():
     """
-    Health check endpoint
+    Basic endpoint - returns API info
         
-    Use to verify if the API is working
+    Use to verify if the API is accessible
     
     Returns:
         {"status": "ok", "message": "API running"}
@@ -119,6 +119,93 @@ async def root():
         "message": "API running",
         "version": "1.0.0"
     }
+
+
+@app.get("/health")
+async def health_check(db: Session = Depends(get_db)):
+    """
+    Comprehensive health check endpoint
+    
+    Checks:
+    - API responsiveness
+    - Database connectivity
+    - Model file availability
+    
+    Returns:
+        Health status with component details
+    """
+    from pathlib import Path
+    from src.config import YOLO_MODEL_PATH
+    
+    health_status = {
+        "status": "healthy",
+        "timestamp": datetime.utcnow().isoformat(),
+        "version": "1.0.0",
+        "components": {}
+    }
+    
+    # Check database connectivity
+    try:
+        # Execute a simple query to verify DB connection
+        from sqlalchemy import text
+        db.execute(text("SELECT 1"))
+        health_status["components"]["database"] = {
+            "status": "healthy",
+            "message": "Database connection successful"
+        }
+    except Exception as e:
+        health_status["status"] = "unhealthy"
+        health_status["components"]["database"] = {
+            "status": "unhealthy",
+            "message": f"Database connection failed: {str(e)}"
+        }
+        logger.error(f"Health check - DB error: {e}")
+    
+    # Check model file availability
+    try:
+        model_path = Path(YOLO_MODEL_PATH)
+        if model_path.exists():
+            model_size_mb = model_path.stat().st_size / (1024 * 1024)
+            health_status["components"]["model"] = {
+                "status": "healthy",
+                "message": f"Model file available ({model_size_mb:.1f} MB)",
+                "path": str(model_path.name)
+            }
+        else:
+            health_status["status"] = "degraded"
+            health_status["components"]["model"] = {
+                "status": "unhealthy",
+                "message": f"Model file not found at {model_path}"
+            }
+    except Exception as e:
+        health_status["components"]["model"] = {
+            "status": "unknown",
+            "message": f"Could not check model: {str(e)}"
+        }
+    
+    # Check upload directory
+    try:
+        if VIDEO_UPLOAD_DIR.exists():
+            health_status["components"]["storage"] = {
+                "status": "healthy",
+                "message": "Upload directory accessible"
+            }
+        else:
+            health_status["components"]["storage"] = {
+                "status": "degraded",
+                "message": "Upload directory does not exist"
+            }
+    except Exception as e:
+        health_status["components"]["storage"] = {
+            "status": "unknown",
+            "message": f"Could not check storage: {str(e)}"
+        }
+    
+    # Return appropriate HTTP status code
+    if health_status["status"] == "unhealthy":
+        raise HTTPException(status_code=503, detail=health_status)
+    
+    return health_status
 
 @app.post("/upload", response_model=UploadResponseSchema)
 async def upload_video(
@@ -316,7 +403,7 @@ async def get_video_results(video_id: int, db: Session = Depends(get_db)):
         # Result: {0: [det1, det2], 1: [det3], ...}
         detections_by_frame: Dict[int, List] = {}
         for det in detections:
-            frame_num = det.frame_id or 0   # If no frame_id, use 0
+            frame_num = det.frame_number or 0   # If no frame_number, use 0
             if frame_num not in detections_by_frame:
                 detections_by_frame[frame_num] = []
             detections_by_frame[frame_num].append(det)
@@ -339,7 +426,7 @@ async def get_video_results(video_id: int, db: Session = Depends(get_db)):
             # Add data
             brands_stats[brand_name]["detections"] += 1
             brands_stats[brand_name]["confidences"].append(det.confidence)
-            brands_stats[brand_name]["frames"].add(det.frame_id or 0)
+            brands_stats[brand_name]["frames"].add(det.frame_number or 0)
         
         # Step 5: Process statistics (calculate averages, etc)
         brands_final = {}

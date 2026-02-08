@@ -13,6 +13,7 @@ Usage:
 
 import argparse
 import csv
+import math
 from pathlib import Path
 from torch.utils.tensorboard import SummaryWriter
 
@@ -97,6 +98,9 @@ def csv_to_tensorboard(run_name: str, overwrite: bool = False) -> bool:
                 
                 try:
                     val = float(value.strip())
+                    # Skip NaN/Inf values to avoid broken TensorBoard plots
+                    if not math.isfinite(val):
+                        continue
                     # Clean up metric name
                     tag = key.replace('(B)', '').strip()
                     writer.add_scalar(tag, val, epoch)

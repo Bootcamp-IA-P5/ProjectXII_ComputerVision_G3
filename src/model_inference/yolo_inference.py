@@ -55,25 +55,27 @@ class YOLOInference:
         self.iou_threshold = iou_threshold
         self.device = device
         
-        self._validate_model_exists()
+        # Check if model exists locally, if not, try to use just the name for auto-download
+        if not self.model_path.exists():
+            logger.warning(f"⚠️ Model not found at {self.model_path}. Attempting to download standard weights '{self.model_path.name}'...")
+            # If it's a standard model, Ultralytics can download it by name
+            # We update the path to just the name so YOLO() triggers download
+            self.model_path = self.model_path.name
+        
         self.model = self._load_model()
         self.class_names = self.model.names
         
         logger.info(
-            f"YOLO model loaded from {self.model_path} "
+            f"✅ YOLO model loaded: {self.model_path} "
             f"on device {self.device}"
         )
-        
+
     def _validate_model_exists(self) -> None:
-        """ Check if model file exists"""
-        if not self.model_path.exists():
-            raise FileNotFoundError(
-                f"Model not found at {self.model_path} "
-                f"Please ensure the model file exists."
-            )
-            
+        """ Deprecated: validation logic moved to __init__ to support auto-download"""
+        pass
+
     def _load_model(self) -> YOLO:
-        """ Load YOLO model from file"""
+        """ Load YOLO model from file or download"""
         try:
             model = YOLO(str(self.model_path))
             if self.device == "auto":

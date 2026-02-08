@@ -69,4 +69,4 @@ frontend/node_modules/
 /docker/README.md
 
 # Ignorar script de análisis local
-/scripts/dataset_analysis.py
+/scripts/dataset_analysis.pydata/

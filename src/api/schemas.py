@@ -4,7 +4,7 @@ Define the structure of data coming in and going out
 """
 
 from pydantic import BaseModel, Field
-from typing import Optional, Dict, List
+from typing import Optional, Dict, List, Union
 from datetime import datetime
 
 
@@ -36,7 +36,7 @@ class VideoResponse(BaseModel):
 
     Returns basic video metadata without detections
     """
-    id: int
+    id: Union[int, str]
     filename: str
     duration_seconds: float
     total_frames: int
@@ -117,9 +117,10 @@ class UploadResponseSchema(BaseModel):
 
     Returned immediately after file upload starts processing
     """
-    video_id: int
+    video_id: Union[int, str]
     filename: str
     status: str  # "queued", "processing", "completed", "failed"
+    task_id: str
     message: str
 
     class Config:

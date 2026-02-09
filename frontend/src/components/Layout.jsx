@@ -4,43 +4,43 @@ import { Camera, Github } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 
 const Layout = ({ children }) => {
-    const location = useLocation();
+  const location = useLocation();
 
-    return (
-        <div className="layout">
-            <header className="header glass-panel">
-                <div className="container header-content">
-                    <Link to="/" className="logo">
-                        <Camera className="logo-icon" />
-                        <span className="logo-text">BrandDetector<span className="accent">AI</span></span>
-                    </Link>
+  return (
+    <div className="layout">
+      <header className="header glass-panel">
+        <div className="container header-content">
+          <Link to="/" className="logo">
+            <Camera className="logo-icon" />
+            <span className="logo-text">BrandDetector<span className="accent">AI</span></span>
+          </Link>
 
-                    <nav className="nav">
-                        <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>
-                            Upload
-                        </Link>
-                        <Link to="/videos" className={`nav-link ${location.pathname === '/videos' ? 'active' : ''}`}>
-                            History
-                        </Link>
-                    </nav>
+          <nav className="nav">
+            <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>
+              Upload
+            </Link>
+            <Link to="/videos" className={`nav-link ${location.pathname === '/videos' ? 'active' : ''}`}>
+              History
+            </Link>
+          </nav>
 
-                    <a href="https://github.com/project-xii" target="_blank" rel="noreferrer" className="github-link">
-                        <Github size={20} />
-                    </a>
-                </div>
-            </header>
+          <a href="https://github.com/project-xii" target="_blank" rel="noreferrer" className="github-link">
+            <Github size={20} />
+          </a>
+        </div>
+      </header>
 
-            <main className="main-content container">
-                {children}
-            </main>
+      <main className="main-content container">
+        {children}
+      </main>
 
-            <footer className="footer">
-                <div className="container">
-                    <p>© 2026 Project XII - Computer Vision Group 3</p>
-                </div>
-            </footer>
+      <footer className="footer">
+        <div className="container">
+          <p>© 2026 Project XII - Computer Vision Group 3</p>
+        </div>
+      </footer>
 
-            <style>{`
+      <style>{`
         .layout {
           display: flex;
           flex-direction: column;
@@ -128,8 +128,8 @@ const Layout = ({ children }) => {
           font-size: 0.875rem;
         }
       `}</style>
-        </div>
-    );
+    </div>
+  );
 };
 
 export default Layout;

@@ -14,7 +14,7 @@ const VideoUploader = () => {
     const [error, setError] = useState(null);
 
     const [config, setConfig] = useState({
-        confidence: 0.5,
+        confidence: 0.7,
         iou: 0.45,
         fps_sample: 1
     });

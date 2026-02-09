@@ -27,6 +27,7 @@ services:
       - API_PORT=8000
       - API_RELOAD=false
       - DEVICE=auto
+      - YOLO_MODEL_NAME=${YOLO_MODEL_NAME:-best_yolov8x_Kiru.pt}
       - CONFIDENCE_THRESHOLD=${CONFIDENCE_THRESHOLD:-0.5}
       - IOU_THRESHOLD=${IOU_THRESHOLD:-0.45}
     volumes:
@@ -62,6 +63,7 @@ services:
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/1
       - DEVICE=auto
+      - YOLO_MODEL_NAME=${YOLO_MODEL_NAME:-best_yolov8x_Kiru.pt}
       - CONFIDENCE_THRESHOLD=${CONFIDENCE_THRESHOLD:-0.5}
       - IOU_THRESHOLD=${IOU_THRESHOLD:-0.45}
     volumes:

@@ -33,7 +33,7 @@ from fastapi.middleware.cors import CORSMiddleware # CORS for React
 from sqlalchemy.orm import Session 
 import cv2
 
-from src.config import API_HOST, API_PORT, API_RELOAD, ALLOWED_ORIGINS, VIDEO_UPLOAD_DIR, DEVICE
+from src.config import API_HOST, API_PORT, API_RELOAD, ALLOWED_ORIGINS, VIDEO_UPLOAD_DIR, DEVICE, CONFIDENCE_THRESHOLD, IOU_THRESHOLD
 from src.database.init_db import init_db, get_db
 # Database models for ORM queries
 from src.database.models import Video, Detection, Brand, VideoBrandStats
@@ -211,8 +211,8 @@ async def health_check(db: Session = Depends(get_db)):
 @app.post("/upload", response_model=UploadResponseSchema)
 async def upload_video(
     file: UploadFile = File(...),
-    confidence_threshold: float = Form(default=0.5, ge=0.0, le=1.0),
-    iou_threshold: float = Form(default=0.45, ge=0.0, le=1.0),
+    confidence_threshold: float = Form(default=CONFIDENCE_THRESHOLD, ge=0.0, le=1.0),
+    iou_threshold: float = Form(default=IOU_THRESHOLD, ge=0.0, le=1.0),
     fps_sample: int = Form(default=1, ge=1),
     db: Session = Depends(get_db)
 ):    
@@ -493,8 +493,8 @@ async def get_video_results(video_id: int, db: Session = Depends(get_db)):
             brands=brands_final,                # Dict with stats per brand
             detections_by_frame=detections_by_frame,
             processing_time_seconds=None,       # Placeholder
-            confidence_threshold=0.5,           # PH, get from DB later
-            iou_threshold=0.45,
+            confidence_threshold=video.confidence_threshold or CONFIDENCE_THRESHOLD,
+            iou_threshold=IOU_THRESHOLD,        # We don't store IOU in DB yet, so use default
             fps_sample=1 
         )
     

@@ -521,6 +521,21 @@ async def get_task_status(task_id: str):
         "error": str(task.info) if task.failed() else None
     }
 
+@app.get("/config")
+async def get_config():
+    """
+    Get API configuration values
+    
+    Returns current configuration settings that can be used by frontend
+    """
+    from src.config import CONFIDENCE_THRESHOLD, IOU_THRESHOLD
+    
+    return {
+        "confidence_threshold": CONFIDENCE_THRESHOLD,
+        "iou_threshold": IOU_THRESHOLD,
+        "default_fps_sample": 1
+    }
+
 # MAIN
 if __name__ == "__main__":
     import uvicorn

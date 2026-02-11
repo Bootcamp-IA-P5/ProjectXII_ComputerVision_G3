@@ -1,6 +1,6 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { UploadCloud, FileVideo, Video, AlertCircle, Loader2 } from 'lucide-react';
-import { uploadVideo } from '../services/api';
+import { uploadVideo, getConfig } from '../services/api';
 import { useNavigate } from 'react-router-dom';
 import styles from './VideoUploader.module.css';
 
@@ -12,12 +12,29 @@ const VideoUploader = () => {
     const [file, setFile] = useState(null);
     const [uploading, setUploading] = useState(false);
     const [error, setError] = useState(null);
-
     const [config, setConfig] = useState({
-        confidence: 0.7,
+        confidence: 0.5, // Default fallback
         iou: 0.45,
         fps_sample: 1
     });
+
+    // Fetch config from backend on component mount
+    useEffect(() => {
+        const fetchConfig = async () => {
+            try {
+                const backendConfig = await getConfig();
+                setConfig({
+                    confidence: backendConfig.confidence_threshold,
+                    iou: backendConfig.iou_threshold,
+                    fps_sample: backendConfig.default_fps_sample
+                });
+            } catch (err) {
+                console.error('Failed to fetch config:', err);
+                // Keep default values if fetch fails
+            }
+        };
+        fetchConfig();
+    }, []);
 
     const handleDrag = (e) => {
         e.preventDefault();

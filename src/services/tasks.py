@@ -2,6 +2,7 @@
 Celery tasks for async video processing
 """
 
+import os
 from celery import shared_task
 from celery.signals import worker_process_init
 from src.celeryconfig import app
@@ -103,7 +104,7 @@ def process_video_task(self, video_id: int, video_path: str,
             repo = DetectionRepository()
             repo.save_video_result(
                 results,
-                model_name="yolov8x_Kiru", 
+                model_name=os.getenv("YOLO_MODEL_NAME").replace(".pt", "").replace(".onnx", ""), 
                 confidence_threshold=confidence_threshold
             )
         

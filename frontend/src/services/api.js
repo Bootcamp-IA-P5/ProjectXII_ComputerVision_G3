@@ -33,4 +33,9 @@ export const getTaskStatus = async (taskId) => {
     return response.data;
 };
 
+export const getConfig = async () => {
+    const response = await api.get('/config');
+    return response.data;
+};
+
 export default api;

@@ -1,4 +1,4 @@
-# 🔥 ProjectXII - Detección de Logos de Marca en Video
+# ProjectXII - Detección de Logos de Marca en Video
 ## 📋 Descripción del Proyecto
 **ProjectXII** es una solución integral de visión por computadora diseñada para automatizar el análisis de presencia de marca en contenido audiovisual. El sistema combina un frontend moderno y reactivo con una arquitectura backend asíncrona potente para procesar videos de alta resolución, detectar logos utilizando modelos **YOLO11x** de última generación y analizar métricas detalladas como el tiempo en pantalla, frecuencia de aparición y confianza.
 Nuestra visión es transformar la auditoría de medios publicitarios, pasando de procesos manuales lentos a un flujo de trabajo impulsado por IA que ofrece resultados precisos y escalables en minutos.

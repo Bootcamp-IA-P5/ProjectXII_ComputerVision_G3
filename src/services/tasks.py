@@ -7,7 +7,7 @@ from celery.signals import worker_process_init
 from src.celeryconfig import app
 from src.model_inference.yolo_inference import YOLOInference
 from src.video_processor.video_processor import VideoProcessor
-from src.config import YOLO_MODEL_PATH, CONFIDENCE_THRESHOLD, IOU_THRESHOLD, DEVICE
+from src.config import YOLO_MODEL_NAME, YOLO_MODEL_PATH, CONFIDENCE_THRESHOLD, IOU_THRESHOLD, DEVICE
 import logging
 
 logger = logging.getLogger(__name__)
@@ -103,7 +103,7 @@ def process_video_task(self, video_id: int, video_path: str,
             repo = DetectionRepository()
             repo.save_video_result(
                 results,
-                model_name="yolov8x_Kiru", 
+                model_name=YOLO_MODEL_NAME.replace(".pt", "").replace(".onnx", ""),
                 confidence_threshold=confidence_threshold
             )
         

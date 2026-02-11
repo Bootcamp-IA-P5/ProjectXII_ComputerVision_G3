@@ -16,7 +16,7 @@ MODELS_DIR = PROJECT_ROOT / "models"
 DATASET_DIR = PROJECT_ROOT / "dataset_yolov8"
 
 # Model configuration
-YOLO_MODEL_NAME = os.getenv("YOLO_MODEL_NAME", "best_yolov8x_Kiru.pt")
+YOLO_MODEL_NAME = os.getenv("YOLO_MODEL_NAME", "best_yolo11x_finetunedPG_Kiru.pt")
 YOLO_MODEL_PATH = MODELS_DIR / "trained" / YOLO_MODEL_NAME
 YOLO_MODEL_PATH_ONNX = MODELS_DIR / "trained" / YOLO_MODEL_NAME.replace(".pt", ".onnx")
 
@@ -25,7 +25,7 @@ VIDEO_EXTENSIONS = {".mp4", ".avi", ".mov", ".mkv", ".flv", ".wmv"}
 DEFAULT_FPS_SAMPLE = 1  # Extract 1 frame per second
 
 # Model inference
-CONFIDENCE_THRESHOLD = float(os.getenv("CONFIDENCE_THRESHOLD", "0.5"))
+CONFIDENCE_THRESHOLD = float(os.getenv("CONFIDENCE_THRESHOLD", "0.15"))
 IOU_THRESHOLD = float(os.getenv("IOU_THRESHOLD", "0.45"))
 DEVICE = os.getenv("DEVICE", "auto")  # auto, cpu, cuda
 

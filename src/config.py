@@ -16,8 +16,9 @@ MODELS_DIR = PROJECT_ROOT / "models"
 DATASET_DIR = PROJECT_ROOT / "dataset_yolov8"
 
 # Model configuration
-YOLO_MODEL_PATH = MODELS_DIR / "trained" / "best_yolov8x_Kiru.pt"
-YOLO_MODEL_PATH_ONNX = MODELS_DIR / "trained" / "best_yolov8x_Kiru.onnx"
+YOLO_MODEL_NAME = os.getenv("YOLO_MODEL_NAME", "best_yolov8x_Kiru.pt")
+YOLO_MODEL_PATH = MODELS_DIR / "trained" / YOLO_MODEL_NAME
+YOLO_MODEL_PATH_ONNX = MODELS_DIR / "trained" / YOLO_MODEL_NAME.replace(".pt", ".onnx")
 
 # Video processing
 VIDEO_EXTENSIONS = {".mp4", ".avi", ".mov", ".mkv", ".flv", ".wmv"}

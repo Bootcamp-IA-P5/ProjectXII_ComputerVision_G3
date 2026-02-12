@@ -1,0 +1,76 @@
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.actions {
+    margin-bottom: 2rem;
+}
+
+.processingState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 5rem 2rem;
+    text-align: center;
+    gap: 1.5rem;
+}
+
+.processingState h2 {
+    font-size: 2rem;
+    background: linear-gradient(to right, #fff, var(--primary-color));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.processingState p {
+    color: var(--text-secondary);
+    font-size: 1.125rem;
+}
+
+.meta {
+    font-family: monospace;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+}
+
+.progressBar {
+    width: 100%;
+    max-width: 400px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 1rem;
+}
+
+.progressFill {
+    height: 100%;
+    width: 50%;
+    background: var(--primary-color);
+    animation: indeterminateload 1.5s infinite ease-in-out;
+    transform-origin: 0% 50%;
+}
+
+@keyframes indeterminateload {
+    0% {
+        transform: translateX(-100%) scaleX(0.2);
+    }
+
+    50% {
+        transform: translateX(0%) scaleX(0.5);
+    }
+
+    100% {
+        transform: translateX(100%) scaleX(0.2);
+    }
+}
+
+.errorState {
+    text-align: center;
+    color: #fca5a5;
+    padding: 4rem;
+}

@@ -31,11 +31,12 @@ from typing import Dict, List # Type hints
 from fastapi import FastAPI, File, UploadFile, Depends, HTTPException, Form
 from fastapi.middleware.cors import CORSMiddleware # CORS for React
 from sqlalchemy.orm import Session 
+import cv2
 
 from src.config import API_HOST, API_PORT, API_RELOAD, ALLOWED_ORIGINS, VIDEO_UPLOAD_DIR, DEVICE
 from src.database.init_db import init_db, get_db
-# UNCOMMENT when DB and models are implemented
-# from src.database.models import Video, Detection, Brand, AnalysisSession
+# Database models for ORM queries
+from src.database.models import Video, Detection, Brand, VideoBrandStats
 from src.api.schemas import (
     VideoUploadRequest,
     VideoResponse,
@@ -106,9 +107,9 @@ async def shutdown_event():
 @app.get("/")
 async def root():
     """
-    Health check endpoint
+    Basic endpoint - returns API info
         
-    Use to verify if the API is working
+    Use to verify if the API is accessible
     
     Returns:
         {"status": "ok", "message": "API running"}
@@ -120,11 +121,98 @@ async def root():
         "version": "1.0.0"
     }
 
+
+@app.get("/health")
+async def health_check(db: Session = Depends(get_db)):
+    """
+    Comprehensive health check endpoint
+    
+    Checks:
+    - API responsiveness
+    - Database connectivity
+    - Model file availability
+    
+    Returns:
+        Health status with component details
+    """
+    from pathlib import Path
+    from src.config import YOLO_MODEL_PATH
+    
+    health_status = {
+        "status": "healthy",
+        "timestamp": datetime.utcnow().isoformat(),
+        "version": "1.0.0",
+        "components": {}
+    }
+    
+    # Check database connectivity
+    try:
+        # Execute a simple query to verify DB connection
+        from sqlalchemy import text
+        db.execute(text("SELECT 1"))
+        health_status["components"]["database"] = {
+            "status": "healthy",
+            "message": "Database connection successful"
+        }
+    except Exception as e:
+        health_status["status"] = "unhealthy"
+        health_status["components"]["database"] = {
+            "status": "unhealthy",
+            "message": f"Database connection failed: {str(e)}"
+        }
+        logger.error(f"Health check - DB error: {e}")
+    
+    # Check model file availability
+    try:
+        model_path = Path(YOLO_MODEL_PATH)
+        if model_path.exists():
+            model_size_mb = model_path.stat().st_size / (1024 * 1024)
+            health_status["components"]["model"] = {
+                "status": "healthy",
+                "message": f"Model file available ({model_size_mb:.1f} MB)",
+                "path": str(model_path.name)
+            }
+        else:
+            health_status["status"] = "degraded"
+            health_status["components"]["model"] = {
+                "status": "unhealthy",
+                "message": f"Model file not found at {model_path}"
+            }
+    except Exception as e:
+        health_status["components"]["model"] = {
+            "status": "unknown",
+            "message": f"Could not check model: {str(e)}"
+        }
+    
+    # Check upload directory
+    try:
+        if VIDEO_UPLOAD_DIR.exists():
+            health_status["components"]["storage"] = {
+                "status": "healthy",
+                "message": "Upload directory accessible"
+            }
+        else:
+            health_status["components"]["storage"] = {
+                "status": "degraded",
+                "message": "Upload directory does not exist"
+            }
+    except Exception as e:
+        health_status["components"]["storage"] = {
+            "status": "unknown",
+            "message": f"Could not check storage: {str(e)}"
+        }
+    
+    # Return appropriate HTTP status code
+    if health_status["status"] == "unhealthy":
+        raise HTTPException(status_code=503, detail=health_status)
+    
+from src.config import CONFIDENCE_THRESHOLD, IOU_THRESHOLD
+
 @app.post("/upload", response_model=UploadResponseSchema)
 async def upload_video(
     file: UploadFile = File(...),
-    confidence_threshold: float = Form(default=0.5, ge=0.0, le=1.0),
-    iou_threshold: float = Form(default=0.45, ge=0.0, le=1.0),
+    confidence_threshold: float = Form(default=CONFIDENCE_THRESHOLD, ge=0.0, le=1.0),
+    iou_threshold: float = Form(default=IOU_THRESHOLD, ge=0.0, le=1.0),
     fps_sample: int = Form(default=1, ge=1),
     db: Session = Depends(get_db)
 ):    
@@ -173,8 +261,34 @@ async def upload_video(
         file_path.write_bytes(contents)
         logger.info(f"✅ File saved: {file_path}")
         
-        # Step 3: Create temporary ID while DB is not ready
-        video_id = str(uuid4())
+        # Step 3: Extract basic metadata and create DB record
+        # Use cv2 to get metadata immediately so we can create a valid Video record
+        cap = cv2.VideoCapture(str(file_path))
+        if not cap.isOpened():
+             raise HTTPException(status_code=400, detail="Could not open uploaded video file")
+             
+        total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        fps = cap.get(cv2.CAP_PROP_FPS)
+        width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        duration = total_frames / fps if fps > 0 else 0
+        cap.release()
+
+        video = Video(
+            filename=file.filename,
+            filepath=str(file_path),
+            total_frames=total_frames,
+            processed_frames=0,
+            fps=fps,
+            duration_seconds=duration,
+            frame_width=width,
+            frame_height=height,
+            confidence_threshold=confidence_threshold
+        )
+        db.add(video)
+        db.commit()
+        db.refresh(video)
+        video_id = video.id
         
         # Step 4: Enqueue Celery task to process video
         task = process_video_task.delay(
@@ -184,13 +298,13 @@ async def upload_video(
             iou_threshold=iou_threshold,
             fps_sample=fps_sample
         )
-        logger.info(f"✅ Video processing task queued: {task.id}")
+        logger.info(f"✅ Video processing task queued: {task.id} (Video ID: {video_id})")
 
         # Step 5: Return response that FastAPI converts to JSON
         return UploadResponseSchema(
-            video_id=video_id,        # ID generated by DB
+            video_id=video_id,
             filename=file.filename,
-            status="queued",            # Initial status
+            status="queued",
             message=f"Video '{file.filename}' uploaded. Processing started. Task ID: {task.id}"
         )
     
@@ -316,7 +430,7 @@ async def get_video_results(video_id: int, db: Session = Depends(get_db)):
         # Result: {0: [det1, det2], 1: [det3], ...}
         detections_by_frame: Dict[int, List] = {}
         for det in detections:
-            frame_num = det.frame_id or 0   # If no frame_id, use 0
+            frame_num = det.frame_number or 0   # If no frame_number, use 0
             if frame_num not in detections_by_frame:
                 detections_by_frame[frame_num] = []
             detections_by_frame[frame_num].append(det)
@@ -339,7 +453,7 @@ async def get_video_results(video_id: int, db: Session = Depends(get_db)):
             # Add data
             brands_stats[brand_name]["detections"] += 1
             brands_stats[brand_name]["confidences"].append(det.confidence)
-            brands_stats[brand_name]["frames"].add(det.frame_id or 0)
+            brands_stats[brand_name]["frames"].add(det.frame_number or 0)
         
         # Step 5: Process statistics (calculate averages, etc)
         brands_final = {}
@@ -405,6 +519,21 @@ async def get_task_status(task_id: str):
         "progress": task.info if task.status == "PROCESSING" else None,
         "result": task.result if task.successful() else None,
         "error": str(task.info) if task.failed() else None
+    }
+
+@app.get("/config")
+async def get_config():
+    """
+    Get API configuration values
+    
+    Returns current configuration settings that can be used by frontend
+    """
+    from src.config import CONFIDENCE_THRESHOLD, IOU_THRESHOLD
+    
+    return {
+        "confidence_threshold": CONFIDENCE_THRESHOLD,
+        "iou_threshold": IOU_THRESHOLD,
+        "default_fps_sample": 1
     }
 
 # MAIN

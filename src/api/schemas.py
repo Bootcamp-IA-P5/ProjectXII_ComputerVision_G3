@@ -43,9 +43,8 @@ class VideoResponse(BaseModel):
     fps: float
     frame_width: int
     frame_height: int
-    is_processed: bool
-    total_detections: Optional[int] = None
-    uploaded_at: datetime
+    processed_frames: int
+    created_at: datetime
     processed_at: Optional[datetime] = None
 
     class Config:
@@ -60,14 +59,11 @@ class DetectionResponse(BaseModel):
     """
     id: int
     brand_id: int
-    brand_name: str
     confidence: float
-    bbox_x1: int
-    bbox_y1: int
-    bbox_x2: int
-    bbox_y2: int
-    bbox_width: int
-    bbox_height: int
+    x1: int
+    y1: int
+    x2: int
+    y2: int
     frame_number: int
 
     class Config:

@@ -2,6 +2,7 @@
 Celery tasks for async video processing
 """
 
+import os
 from celery import shared_task
 from celery.signals import worker_process_init
 from src.celeryconfig import app
@@ -96,6 +97,16 @@ def process_video_task(self, video_id: int, video_path: str,
             conf=confidence_threshold,
             iou=iou_threshold
         )
+        
+        # Save results to database
+        if results and "error" not in results:
+            from src.database.repository import DetectionRepository
+            repo = DetectionRepository()
+            repo.save_video_result(
+                results,
+                model_name=os.getenv("YOLO_MODEL_NAME").replace(".pt", "").replace(".onnx", ""), 
+                confidence_threshold=confidence_threshold
+            )
         
         # Update task status: complete
         self.update_state(state="SUCCESS", meta={"current": 100, "status": "Complete"})

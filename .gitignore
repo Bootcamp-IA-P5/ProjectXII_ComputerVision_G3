@@ -1,0 +1,100 @@
+# =============================================================================
+# Python & Jupyter
+# =============================================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.ipynb_checkpoints
+.ipython/
+.jupyter/
+.env
+.venv
+venv/
+
+# =============================================================================
+# Datasets & Large Files
+# =============================================================================
+# Ignorar imágenes del dataset (mantener solo estructura)
+dataset_yolov8/train/images/*.jpg
+dataset_yolov8/train/images/*.png
+dataset_yolov8/train/images/*.jpeg
+dataset_yolov8/valid/images/*.jpg
+dataset_yolov8/valid/images/*.png
+dataset_yolov8/valid/images/*.jpeg
+dataset_yolov8/test/images/*.jpg
+dataset_yolov8/test/images/*.png
+dataset_yolov8/test/images/*.jpeg
+
+# Ignorar labels del dataset (mantener solo estructura)
+dataset_yolov8/train/labels/*.txt
+dataset_yolov8/valid/labels/*.txt
+dataset_yolov8/test/labels/*.txt
+
+# Ignorar archivos cache de YOLO
+dataset_yolov8/*/labels.cache
+
+# Ignorar configuraciones locales generadas automáticamente
+dataset_yolov8/data_local*.yaml
+
+# Permitir archivos de configuración y documentación
+!dataset_yolov8/data.yaml
+!dataset_yolov8/README*.txt
+!dataset_yolov8/README*.md
+!dataset_yolov8/**/.gitkeep
+
+# Ignorar ZIP del dataset
+dataset_yolov8.zip
+*.zip
+*.tar.gz
+
+# =============================================================================
+# YOLO / Ultralytics Output
+# =============================================================================
+# Ignorar la carpeta runs (logs masivos de entrenamiento)
+runs/
+# ...pero si quieres puedes des-ignorar los resultados resumen (opcional)
+# !runs/**/args.yaml
+
+# Ignorar modelos base descargados automáticamente
+yolov8n.pt
+yolo11n.pt
+yolo11s.pt
+yolo11m.pt
+yolo11l.pt
+yolo11x.pt
+yolo26n.pt
+
+# =============================================================================
+# Trained Models (.pt)
+# =============================================================================
+# Ignorar todos los .pt por defecto (suelen ser grandes)
+*.pt
+*.onnx
+
+# ¡EXCEPCIÓN! Permitir subir solo los archivos de configuración
+!models/*.yaml
+!models/README.md
+
+# =============================================================================
+# OS & IDE
+# =============================================================================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# =============================================================================
+# Docker & Logs
+# =============================================================================
+*.log
+
+# Ignorar archivos de entrenamiento en docker
+/docker/docker-compose.training.yml
+/docker/Dockerfile.training
+/docker/README.md
+
+# Ignorar script de análisis local
+/scripts/dataset_analysis.py
+
+# video files
+/videos

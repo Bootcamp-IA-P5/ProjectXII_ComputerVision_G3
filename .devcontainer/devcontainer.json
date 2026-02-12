@@ -1,12 +1,42 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/python
 {
-  "name": "ProjectXII CV",
-  "dockerFile": "../Dockerfile",
-  "runArgs": ["--gpus=all"],
-  "remoteUser": "root",
+  "name": "ProjectXII Computer Vision",
+  "image": "mcr.microsoft.com/devcontainers/python:2-3.11-trixie",
+  
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {}
+  },
+  
   "customizations": {
     "vscode": {
-      "extensions": ["ms-python.python", "ms-toolsai.jupyter"]
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-python.debugpy",
+        "ms-vscode.makefile-tools",
+        "eeyore.indent-rainbow",
+        "GitHub.copilot"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python3",
+        "python.linting.enabled": true,
+        "python.linting.pylintEnabled": false,
+        "python.formatting.provider": "black",
+        "[python]": {
+          "editor.formatOnSave": true,
+          "editor.defaultFormatter": "ms-python.python"
+        }
+      }
     }
   },
-  "postCreateCommand": "pip install -e .[dev]"
+  
+  "postCreateCommand": "pip3 install --user -r requirements.txt && pip3 install --user -r requirements-dev.txt",
+  
+  "forwardPorts": [8000, 3000, 5173],
+  "portsAttributes": {
+    "8000": {"label": "FastAPI", "onAutoForward": "notify"},
+    "3000": {"label": "React Dev", "onAutoForward": "notify"},
+    "5173": {"label": "Vite", "onAutoForward": "notify"}
+  }
 }
